@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 
+/* Database */
+require('./util/setupMongoose')();
+
+/* Middleware */
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
@@ -11,7 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 /* Static files */
-const STATIC_FOLDER = require('./static');
+const STATIC_FOLDER = require('./util/static');
 const path = require('path');
 app.use('/public', express.static(STATIC_FOLDER));
 app.use('/static', express.static(path.join(STATIC_FOLDER, 'static')));

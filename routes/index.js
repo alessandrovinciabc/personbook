@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const STATIC_FOLDER = require('../static');
+const STATIC_FOLDER = require('../util/static');
 
 /* Always re-route to main file */
 router.get('/', function (req, res) {
