@@ -3,12 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "initialize": "run-p install-dep:* && run-s frontend-build start",
+    "install-dep:frontend": "cd frontend && npm i",
+    "install-dep:backend": "npm i",
+    "frontend-build": "cd frontend && npm run build",
+    "start": "DEBUG=personbook:* node ./bin/www",
+    "start-dev": "DEBUG=personbook:* nodemon ./bin/www -i frontend"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.10",
+    "npm-run-all": "^4.1.5"
   }
 }
