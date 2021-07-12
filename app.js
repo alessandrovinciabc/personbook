@@ -5,11 +5,29 @@ const app = express();
 require('./util/setupMongoose')();
 
 /* Middleware */
+const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    cookie: { maxAge: 86400000 },
+    store: new MemoryStore({ checkPeriod: 86400000 }),
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+const passport = require('passport');
+
+const passportSetup = require('./util/setupPassport');
+app.use(passportSetup);
+app.use(passport.initialize());
+app.use(passport.session());
+
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 app.use(logger('tiny'));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
