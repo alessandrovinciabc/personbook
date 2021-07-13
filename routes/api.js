@@ -31,4 +31,17 @@ router.get(
   }
 );
 
+router.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+router.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/auth/error' }),
+  function (req, res) {
+    res.redirect('/');
+  }
+);
+
 module.exports = router;
