@@ -10,6 +10,10 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
+const FacebookStrategy = require('passport-facebook').Strategy;
+const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID;
+const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET;
+
 passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
@@ -27,6 +31,7 @@ function setup(req, res, next) {
   const CALLBACK_BASE = `${req.protocol}://${req.hostname}:${port}/api/auth/`;
   const GITHUB_CALLBACK = CALLBACK_BASE + 'github/callback';
   const GOOGLE_CALLBACK = CALLBACK_BASE + 'google/callback';
+  const FACEBOOK_CALLBACK = CALLBACK_BASE + 'facebook/callback';
 
   // Strategies
   passport.use(
@@ -94,6 +99,44 @@ function setup(req, res, next) {
             name: displayName,
             authId: {
               provider: 'google',
+              value: id,
+            },
+          });
+
+          done(null, newUser);
+        } catch (err) {
+          done(err);
+        }
+      }
+    )
+  );
+
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: FACEBOOK_CLIENT_ID,
+        clientSecret: FACEBOOK_CLIENT_SECRET,
+        callbackURL: FACEBOOK_CALLBACK,
+      },
+      async (token, refreshToken, profile, done) => {
+        let userFromDB;
+        let { displayName, id } = profile;
+
+        try {
+          /* Find existing account */
+          userFromDB = await User.findOne({
+            authId: { provider: 'facebook', value: id },
+          });
+
+          if (userFromDB) {
+            return done(null, userFromDB);
+          }
+
+          /* Create new account */
+          let newUser = await User.create({
+            name: displayName,
+            authId: {
+              provider: 'facebook',
               value: id,
             },
           });

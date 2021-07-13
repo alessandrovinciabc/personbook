@@ -44,4 +44,14 @@ router.get(
   }
 );
 
+router.get('/auth/facebook', passport.authenticate('facebook'));
+
+router.get(
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/auth/error' }),
+  function (req, res) {
+    res.redirect('/');
+  }
+);
+
 module.exports = router;
