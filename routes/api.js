@@ -54,4 +54,8 @@ router.get(
   }
 );
 
+router.get('/auth/error', (req, res) => {
+  res.send('Auth error.');
+});
+
 module.exports = router;
