@@ -1,36 +1,32 @@
 import React from 'react';
 
+// Redux
 import { useSelector } from 'react-redux';
-
 import { selectCurrentUser, selectStatus } from './features/auth/authSlice';
 
+// Components
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
-import Loader from './components/Loader';
+// Pages
 import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
 
 function App() {
   let auth = useSelector(selectCurrentUser);
-  let provider = auth ? auth.authId.provider : 'None';
   let authStatus = useSelector(selectStatus);
 
   return (
     <BrowserRouter>
-      <h1>
-        Auth Status: {authStatus} - Provider: {provider}
-      </h1>
-      <h2>{auth?.name || 'No user currently logged in.'}</h2>
-      <br />
-      {auth && <a href="/api/auth/logout">Logout</a>}
-      <br />
-      <br />
-      {authStatus !== 'fulfilled' && <Loader />}
       <Switch>
         <Route path="/login" exact>
           <LoginPage />
         </Route>
 
         {authStatus === 'fulfilled' && !auth && <Redirect to="/login" />}
+
+        <Route path="/" exact>
+          <HomePage />
+        </Route>
       </Switch>
     </BrowserRouter>
   );
