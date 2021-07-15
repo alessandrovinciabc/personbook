@@ -43,6 +43,16 @@ const apiRouter = require('./routes/api');
 const indexRouter = require('./routes/index');
 
 app.use('/api', apiRouter);
-app.use('*', indexRouter);
+app.use(
+  '*',
+  (req, res, next) => {
+    if (process.env.NODE_ENV !== 'production') {
+      res.redirect('http://localhost:3001' + req.originalUrl);
+    } else {
+      next();
+    }
+  },
+  indexRouter
+);
 
 module.exports = app;

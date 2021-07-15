@@ -21,6 +21,9 @@ function App() {
       </h1>
       <h2>{auth?.name || 'No user currently logged in.'}</h2>
       <br />
+      {auth && <a href="/api/auth/logout">Logout</a>}
+      <br />
+      <br />
       {authStatus !== 'fulfilled' && <Loader />}
       <Switch>
         <Route path="/login" exact>
