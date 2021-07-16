@@ -10,6 +10,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 // Pages
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
+import Page404 from './pages/Page404';
 
 function App() {
   let auth = useSelector(selectCurrentUser);
@@ -23,6 +24,10 @@ function App() {
         </Route>
 
         {authStatus === 'fulfilled' && !auth && <Redirect to="/login" />}
+
+        <Route path="/404" exact>
+          <Page404 />
+        </Route>
 
         <Route path="/" exact>
           <HomePage />
