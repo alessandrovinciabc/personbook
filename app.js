@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const createError = require('http-errors');
 
 /* Database */
 require('./util/setupMongoose')();
@@ -47,12 +48,21 @@ app.use(
   '*',
   (req, res, next) => {
     if (process.env.NODE_ENV !== 'production') {
-      res.redirect('http://localhost:3001' + req.originalUrl);
+      const url = req.originalUrl;
+      if (url.match(/^\/api/g))
+        return next(createError(404, 'Page not found.'));
+
+      res.redirect('http://localhost:3001' + url);
     } else {
-      next();
+      // Send index.html from frontend
+      // ...
     }
   },
   indexRouter
 );
+
+app.use((err, req, res, next) => {
+  if (err.statusCode === 404) res.redirect('/404');
+});
 
 module.exports = app;
