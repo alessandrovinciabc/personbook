@@ -62,7 +62,9 @@ app.use(
 );
 
 app.use((err, req, res, next) => {
-  if (err.statusCode === 404) res.redirect('/404');
+  if (err.statusCode === 404) return res.redirect('/404');
+
+  res.send('Error: ' + err.message);
 });
 
 module.exports = app;

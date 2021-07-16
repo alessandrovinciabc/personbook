@@ -2,13 +2,16 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const UserSchema = new Schema({
-  name: String,
-  authId: {
-    provider: String,
-    value: String,
+const UserSchema = new Schema(
+  {
+    name: String,
+    authId: {
+      provider: String,
+      value: String,
+    },
   },
-});
+  { timestamps: true }
+);
 
 /*
 Features
