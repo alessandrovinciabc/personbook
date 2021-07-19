@@ -1,3 +1,5 @@
+const createError = require('http-errors');
+
 module.exports = function paginate(mongooseModel, entriesPerPage = 10) {
   if (mongooseModel == null) throw new Error('Model is undefined/null.');
 
