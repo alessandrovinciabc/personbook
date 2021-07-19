@@ -19,23 +19,9 @@ router.get('/account', isAuthenticated, (req, res) => {
 });
 
 const User = require('../models/User');
+const paginateMongoose = require('../util/paginateMongoose');
 
-router.get('/user', isAuthenticated, (req, res, next) => {
-  let { page = 1 } = req.query;
-  page = parseInt(page);
-
-  if (Number.isNaN(page) || page <= 0)
-    return next(createError(400, 'Invalid page number for list of users.'));
-
-  const ENTRIES_PER_PAGE = 10;
-
-  User.find({})
-    .sort({ createdAt: -1 })
-    .skip(ENTRIES_PER_PAGE * (page - 1))
-    .limit(ENTRIES_PER_PAGE)
-    .then((users) => res.json(users))
-    .catch((err) => next(err));
-});
+router.get('/user', isAuthenticated, paginateMongoose(User));
 
 router.get('/auth/logout', (req, res) => {
   req.logout();
