@@ -11,6 +11,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import Page404 from './pages/Page404';
+import UserListPage from './pages/UserListPage';
 
 function App() {
   let auth = useSelector(selectCurrentUser);
@@ -31,6 +32,9 @@ function App() {
 
         <Route path="/" exact>
           <HomePage />
+        </Route>
+        <Route path="/users" exact>
+          <UserListPage />
         </Route>
       </Switch>
     </BrowserRouter>
