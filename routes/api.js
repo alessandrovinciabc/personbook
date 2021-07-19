@@ -1,68 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-const passport = require('passport');
+const controller = require('../controllers/apiController');
 
-const createError = require('http-errors');
+router.get('/user', controller.user.GET);
 
-function isAuthenticated(req, res, next) {
-  if (req.user == null) return res.redirect('/');
-  next();
-}
+/* Related to Authentication */
+router.get('/account', controller.account.GET);
+router.get('/auth/logout', controller.auth.logout.GET);
 
-router.get('/', function (req, res) {
-  res.json({ msg: 'api' });
-});
+/* OAuth Paths */
+router.get('/auth/github', controller.auth.github.GET);
+router.get('/auth/google', controller.auth.google.GET);
+router.get('/auth/facebook', controller.auth.facebook.GET);
 
-router.get('/account', isAuthenticated, (req, res) => {
-  res.json({ user: req.user });
-});
+/* Callbacks */
+router.get('/auth/github/callback', controller.auth.github.callback);
+router.get('/auth/google/callback', controller.auth.google.callback);
+router.get('/auth/facebook/callback', controller.auth.facebook.callback);
 
-const User = require('../models/User');
-const paginateMongoose = require('../util/paginateMongoose');
-
-router.get('/user', isAuthenticated, paginateMongoose(User));
-
-router.get('/auth/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-});
-
-router.get('/auth/github', passport.authenticate('github'));
-
-router.get(
-  '/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/auth/error' }),
-  function (req, res) {
-    res.redirect('/');
-  }
-);
-
-router.get(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
-);
-
-router.get(
-  '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/auth/error' }),
-  function (req, res) {
-    res.redirect('/');
-  }
-);
-
-router.get('/auth/facebook', passport.authenticate('facebook'));
-
-router.get(
-  '/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/auth/error' }),
-  function (req, res) {
-    res.redirect('/');
-  }
-);
-
-router.get('/auth/error', (req, res) => {
-  res.send('Auth error.');
-});
+router.get('/auth/error', controller.auth.error.GET);
 
 module.exports = router;
