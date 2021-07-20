@@ -52,16 +52,21 @@ function UserListPage(props) {
       <>
         <button
           onClick={() => {
-            setPageNumber(startingPage - 1);
+            let nextPage = startingPage - 1;
+            if (nextPage > totalPages) return;
+            setPageNumber(nextPage);
           }}
+          disabled={startingPage - 1 <= 0}
         >
           &lt;
         </button>
         {output}
         <button
           onClick={() => {
-            setPageNumber(lastPage + 1);
+            let nextPage = lastPage + 1;
+            setPageNumber(nextPage);
           }}
+          disabled={lastPage + 1 > totalPages}
         >
           &gt;
         </button>
