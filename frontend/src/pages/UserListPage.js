@@ -16,29 +16,52 @@ function UserListPage(props) {
   let authStatus = useSelector(selectStatus);
 
   let [pageNumber, setPageNumber] = useState(1);
+  let [maxQuota, setMaxQuota] = useState(1);
   let [users, setUsers] = useState([]);
 
   useEffect(() => {
     axios.get(`/api/user?page=${pageNumber}`).then((response) => {
-      let newUsers = response.data;
+      let newUsers = response.data.docs;
       setUsers(newUsers);
+
+      setMaxQuota(response.data.maxQuota);
     });
   }, [pageNumber]);
 
   function generatePageButtons(nOfPages) {
     let output, lastPage, startingPage;
     output = [];
-    let groupNumber = Math.trunc(pageNumber / (nOfPages + 1)) + 1;
+    let groupNumber = Math.ceil(pageNumber / nOfPages);
     lastPage = groupNumber * nOfPages;
     startingPage = lastPage - nOfPages + 1;
     for (let i = startingPage; i <= lastPage; ++i) {
+      let shouldBeSkipped = (i * users.length) % maxQuota <= 0;
+      if (shouldBeSkipped) break;
       output.push(
         <a href onClick={() => setPageNumber(i)}>
           {i}
         </a>
       );
     }
-    return output;
+    return (
+      <>
+        <button
+          onClick={() => {
+            setPageNumber(startingPage - 1);
+          }}
+        >
+          &lt;
+        </button>
+        {output}
+        <button
+          onClick={() => {
+            setPageNumber(lastPage + 1);
+          }}
+        >
+          &gt;
+        </button>
+      </>
+    );
   }
 
   function displayUsers() {
