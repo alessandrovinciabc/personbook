@@ -16,7 +16,8 @@ function UserListPage(props) {
   let authStatus = useSelector(selectStatus);
 
   let [pageNumber, setPageNumber] = useState(1);
-  let [maxQuota, setMaxQuota] = useState(1);
+  let [maxQuota, setMaxQuota] = useState(0);
+  let [remainingQuota, setRemainingQuota] = useState(0);
   let [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ function UserListPage(props) {
       setUsers(newUsers);
 
       setMaxQuota(response.data.maxQuota);
+      setRemainingQuota(response.data.remainingQuota);
     });
   }, [pageNumber]);
 
@@ -34,8 +36,11 @@ function UserListPage(props) {
     let groupNumber = Math.ceil(pageNumber / nOfPages);
     lastPage = groupNumber * nOfPages;
     startingPage = lastPage - nOfPages + 1;
+
+    let totalPages = Math.ceil(maxQuota / (maxQuota - remainingQuota));
+
     for (let i = startingPage; i <= lastPage; ++i) {
-      let shouldBeSkipped = (i * users.length) % maxQuota <= 0;
+      let shouldBeSkipped = i > totalPages;
       if (shouldBeSkipped) break;
       output.push(
         <a href onClick={() => setPageNumber(i)}>
