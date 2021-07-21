@@ -52,14 +52,36 @@ controller.friends = {
       let { newFriend } = req.body;
       User.findByIdAndUpdate(id, { $addToSet: { friends: newFriend } })
         .then(() => {
-          res.json({ added: true });
+          res.json({ status: true });
         })
         .catch((err) => {
           return next(err);
         });
     },
   ],
-  DELETE: (req, res) => {},
+  DELETE: [
+    isAuthenticated,
+    (req, res, next) => {
+      let friendToDelete = req.params.friendid;
+      let currentUser = req.user;
+      let idOfUser = req.params.id;
+
+      if (idOfUser !== currentUser._id.toString())
+        return next(
+          400,
+          createError("You can't delete friends on behalf of other people!")
+        );
+
+      currentUser
+        .update({ $pull: { friends: friendToDelete } })
+        .then(() => {
+          res.json({ status: true });
+        })
+        .catch((err) => {
+          return next(err);
+        });
+    },
+  ],
 };
 
 controller.auth = {};
