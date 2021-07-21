@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose;
 
 const { Schema } = mongoose;
 
@@ -9,6 +10,7 @@ const UserSchema = new Schema(
       provider: String,
       value: String,
     },
+    friends: [{ type: ObjectId }],
   },
   { timestamps: true }
 );
