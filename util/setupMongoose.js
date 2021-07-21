@@ -6,6 +6,7 @@ function initializeDB() {
     .connect(process.env.DB_STRING, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useFindAndModify: false,
     })
     .then(() => {
       debug('Succesfully connected to database.');

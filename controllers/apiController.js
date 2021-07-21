@@ -3,6 +3,8 @@ const passport = require('passport');
 const User = require('../models/User');
 const paginateMongoose = require('../util/paginateMongoose');
 
+const createError = require('http-errors');
+
 function isAuthenticated(req, res, next) {
   if (req.user == null) return res.redirect('/');
   next();
@@ -35,6 +37,29 @@ controller.specificUser = {
     if (requestedUser) return res.json(requestedUser);
     return res.status(404).json({ msg: 'User not found.' });
   },
+};
+
+controller.friends = {
+  POST: [
+    isAuthenticated,
+    (req, res, next) => {
+      let { id } = req.params;
+      if (id !== req.user._id.toString())
+        return next(
+          createError(400, "You can't add friends on behalf of other people!")
+        );
+
+      let { newFriend } = req.body;
+      User.findByIdAndUpdate(id, { $addToSet: { friends: newFriend } })
+        .then(() => {
+          res.json({ added: true });
+        })
+        .catch((err) => {
+          return next(err);
+        });
+    },
+  ],
+  DELETE: (req, res) => {},
 };
 
 controller.auth = {};
