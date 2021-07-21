@@ -22,6 +22,21 @@ controller.user = {
   GET: [isAuthenticated, paginateMongoose(User)],
 };
 
+controller.specificUser = {
+  GET: async (req, res, next) => {
+    let { id } = req.params;
+    let requestedUser;
+    try {
+      requestedUser = await User.findById(id);
+    } catch (err) {
+      next(err);
+    }
+
+    if (requestedUser) return res.json(requestedUser);
+    return res.status(404).json({ msg: 'User not found.' });
+  },
+};
+
 controller.auth = {};
 controller.auth.error = {
   GET: (req, res) => {

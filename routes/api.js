@@ -4,6 +4,7 @@ const router = express.Router();
 const controller = require('../controllers/apiController');
 
 router.get('/user', controller.user.GET);
+router.get('/user/:id', controller.specificUser.GET);
 
 /* Related to Authentication */
 router.get('/account', controller.account.GET);
