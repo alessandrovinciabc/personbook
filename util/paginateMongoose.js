@@ -31,7 +31,7 @@ module.exports = function paginate(mongooseModel, entriesPerPage = 10) {
     res.json({
       docs,
       maxQuota: count,
-      remainingQuota: count - entriesPerPage,
+      usersPerPage: entriesPerPage,
     });
   };
 };
