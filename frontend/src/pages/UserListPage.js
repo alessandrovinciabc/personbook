@@ -39,6 +39,23 @@ let PageButton = styled.button`
   }
 `;
 
+let ArrowButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  width: 3rem;
+
+  border-radius: 2px;
+  padding: 0.4rem 0.6rem;
+  margin: 3px;
+
+  font-size: 1.4rem;
+  font-weight: bold;
+
+  transition: 0.1s all;
+`;
+
 function UserListPage(props) {
   let auth = useSelector(selectCurrentUser);
   let authStatus = useSelector(selectStatus);
@@ -82,7 +99,7 @@ function UserListPage(props) {
     }
     return (
       <>
-        <button
+        <ArrowButton
           onClick={() => {
             let nextPage = startingPage - 1;
             if (nextPage > totalPages) return;
@@ -91,9 +108,9 @@ function UserListPage(props) {
           disabled={startingPage - 1 <= 0}
         >
           &lt;
-        </button>
+        </ArrowButton>
         {output}
-        <button
+        <ArrowButton
           onClick={() => {
             let nextPage = lastPage + 1;
             setPageNumber(nextPage);
@@ -101,7 +118,7 @@ function UserListPage(props) {
           disabled={lastPage + 1 > totalPages}
         >
           &gt;
-        </button>
+        </ArrowButton>
       </>
     );
   }
