@@ -11,6 +11,34 @@ import Loader from '../components/Loader';
 
 import axios from 'axios';
 
+import styled from 'styled-components';
+
+let PageButton = styled.button`
+  background: none;
+  border: none;
+
+  border-radius: 2px;
+  padding: 0.4rem 0.6rem;
+  margin: 3px;
+  font-size: 1rem;
+
+  background-color: rgba(0, 0, 0, 0.1);
+
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+
+  transition: 0.1s all;
+
+  &:hover {
+    background-color: hsl(204, 86%, 46%);
+    cursor: pointer;
+  }
+
+  &:disabled {
+    background-color: hsl(204, 86%, 46%);
+    color: white;
+  }
+`;
+
 function UserListPage(props) {
   let auth = useSelector(selectCurrentUser);
   let authStatus = useSelector(selectStatus);
@@ -42,10 +70,14 @@ function UserListPage(props) {
     for (let i = startingPage; i <= lastPage; ++i) {
       let shouldBeSkipped = i > totalPages;
       if (shouldBeSkipped) break;
+
       output.push(
-        <a href onClick={() => setPageNumber(i)}>
+        <PageButton
+          disabled={pageNumber === i}
+          onClick={() => setPageNumber(i)}
+        >
           {i}
-        </a>
+        </PageButton>
       );
     }
     return (
@@ -77,7 +109,7 @@ function UserListPage(props) {
   function displayUsers() {
     if (!(users.length > 0)) return;
 
-    return users.map((user) => <div>{user._id}</div>);
+    return users.map((user) => <div>{user.name}</div>);
   }
 
   return (
