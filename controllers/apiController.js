@@ -122,14 +122,4 @@ controller.auth.google = {
   ],
 };
 
-controller.auth.facebook = {
-  GET: passport.authenticate('facebook'),
-  callback: [
-    passport.authenticate('facebook', { failureRedirect: '/auth/error' }),
-    function (req, res) {
-      res.redirect('/');
-    },
-  ],
-};
-
 module.exports = controller;

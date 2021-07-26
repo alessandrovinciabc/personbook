@@ -17,8 +17,6 @@ function LoginPage(props) {
           <a href="/api/auth/github">Login with Github</a>
           <br />
           <a href="/api/auth/google">Login with Google</a>
-          <br />
-          <a href="/api/auth/facebook">Login with Facebook</a>
         </div>
       </div>
     </>

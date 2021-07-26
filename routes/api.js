@@ -16,12 +16,10 @@ router.get('/auth/logout', controller.auth.logout.GET);
 /* OAuth Paths */
 router.get('/auth/github', controller.auth.github.GET);
 router.get('/auth/google', controller.auth.google.GET);
-router.get('/auth/facebook', controller.auth.facebook.GET);
 
 /* Callbacks */
 router.get('/auth/github/callback', controller.auth.github.callback);
 router.get('/auth/google/callback', controller.auth.google.callback);
-router.get('/auth/facebook/callback', controller.auth.facebook.callback);
 
 router.get('/auth/error', controller.auth.error.GET);
 
