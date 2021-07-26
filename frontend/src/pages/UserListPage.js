@@ -3,8 +3,12 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
 
 // Redux
-import { useSelector } from 'react-redux';
-import { selectCurrentUser, selectStatus } from '../features/auth/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  selectCurrentUser,
+  selectStatus,
+  fetchAccount,
+} from '../features/auth/authSlice';
 
 // Components
 import Loader from '../components/Loader';
@@ -13,6 +17,8 @@ import PaginationBar from '../components/PaginationBar';
 import axios from 'axios';
 
 function UserListPage(props) {
+  const dispatch = useDispatch();
+
   let auth = useSelector(selectCurrentUser);
   let authStatus = useSelector(selectStatus);
 
@@ -102,7 +108,7 @@ function UserListPage(props) {
               }
 
               promise.then(() => {
-                window.location.reload();
+                dispatch(fetchAccount());
               });
             }}
           >
