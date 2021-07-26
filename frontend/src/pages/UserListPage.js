@@ -41,10 +41,76 @@ function UserListPage(props) {
       });
   }, [pageNumber]);
 
+  function onFriendAdd(idOfRequestedFriend) {
+    return axios.post(`/api/user/${auth._id}/friends`, {
+      newFriend: idOfRequestedFriend,
+    });
+  }
+
+  function onFriendDelete(idOfFriendToRemove) {
+    return axios.delete(`/api/user/${auth._id}/friends/${idOfFriendToRemove}`);
+  }
+
   function displayUsers() {
     if (!(users.length > 0)) return;
 
-    return users.map((user) => <div key={user._id}>{user.name}</div>);
+    return users.map((user) => {
+      let currentUserRequestedFriendship =
+        auth.friends.filter((friend) => {
+          return user._id.toString() === friend.toString();
+        }).length === 0
+          ? false
+          : true;
+
+      let userToDisplayRequestedFriendship =
+        user.friends.filter((friend) => {
+          return auth._id.toString() === friend.toString();
+        }).length === 0
+          ? false
+          : true;
+
+      let areFriends =
+        currentUserRequestedFriendship && userToDisplayRequestedFriendship;
+
+      let heRequested =
+        !currentUserRequestedFriendship && userToDisplayRequestedFriendship;
+
+      let youRequested =
+        currentUserRequestedFriendship && !userToDisplayRequestedFriendship;
+
+      let FriendRequestButton = () => {
+        let buttonText;
+
+        if (areFriends) {
+          buttonText = 'Remove Friend';
+        } else if (heRequested) {
+          buttonText = 'Accept';
+        } else if (youRequested) {
+          buttonText = 'Cancel';
+        } else {
+          buttonText = 'Add';
+        }
+
+        return (
+          <button
+            onClick={() => {
+              onFriendAdd(user._id).then(() => {
+                window.location.reload();
+              });
+            }}
+          >
+            {buttonText}
+          </button>
+        );
+      };
+
+      return (
+        <div key={user._id}>
+          {user.name}
+          <FriendRequestButton />
+        </div>
+      );
+    });
   }
 
   return (
