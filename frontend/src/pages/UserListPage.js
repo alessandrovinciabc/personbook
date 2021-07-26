@@ -94,7 +94,14 @@ function UserListPage(props) {
         return (
           <button
             onClick={() => {
-              onFriendAdd(user._id).then(() => {
+              let promise;
+              if (areFriends || youRequested) {
+                promise = onFriendDelete(user._id);
+              } else {
+                promise = onFriendAdd(user._id);
+              }
+
+              promise.then(() => {
                 window.location.reload();
               });
             }}
