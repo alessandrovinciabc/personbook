@@ -61,6 +61,9 @@ function UserListPage(props) {
     if (!(users.length > 0)) return;
 
     return users.map((user) => {
+      if (user._id.toString() === auth._id.toString())
+        return <div key={user._id}>{user.name}</div>;
+
       let currentUserRequestedFriendship =
         auth.friends.filter((friend) => {
           return user._id.toString() === friend.toString();

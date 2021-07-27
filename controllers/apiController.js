@@ -50,6 +50,10 @@ controller.friends = {
         );
 
       let { newFriend } = req.body;
+      if (req.user._id.toString() === newFriend) {
+        return next(createError(400, "You can't be friends with yourself!"));
+      }
+
       User.findByIdAndUpdate(id, { $addToSet: { friends: newFriend } })
         .then(() => {
           res.json({ status: true });
