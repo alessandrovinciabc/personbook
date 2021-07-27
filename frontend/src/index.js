@@ -11,11 +11,9 @@ import CSSReset from './Reset.jsx';
 store.dispatch(fetchAccount());
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <CSSReset />
-      <App />
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <CSSReset />
+    <App />
+  </Provider>,
   document.getElementById('root')
 );
