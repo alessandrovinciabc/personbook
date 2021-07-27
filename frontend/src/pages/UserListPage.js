@@ -3,24 +3,18 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  selectCurrentUser,
-  selectStatus,
-  fetchAccount,
-} from '../features/auth/authSlice';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../features/auth/authSlice';
 
 // Components
 import Loader from '../components/Loader';
 import PaginationBar from '../components/PaginationBar';
+import UserBlock from '../components/UserBlock';
 
 import axios from 'axios';
 
 function UserListPage(props) {
-  const dispatch = useDispatch();
-
   let auth = useSelector(selectCurrentUser);
-  let authStatus = useSelector(selectStatus);
 
   let [pageNumber, setPageNumber] = useState(1);
   let [maxQuota, setMaxQuota] = useState(0);
@@ -60,73 +54,13 @@ function UserListPage(props) {
   function displayUsers() {
     if (!(users.length > 0)) return;
 
-    return users.map((user) => {
-      if (user._id.toString() === auth._id.toString())
-        return <div key={user._id}>{user.name}</div>;
-
-      let currentUserRequestedFriendship =
-        auth.friends.filter((friend) => {
-          return user._id.toString() === friend.toString();
-        }).length === 0
-          ? false
-          : true;
-
-      let userToDisplayRequestedFriendship =
-        user.friends.filter((friend) => {
-          return auth._id.toString() === friend.toString();
-        }).length === 0
-          ? false
-          : true;
-
-      let areFriends =
-        currentUserRequestedFriendship && userToDisplayRequestedFriendship;
-
-      let heRequested =
-        !currentUserRequestedFriendship && userToDisplayRequestedFriendship;
-
-      let youRequested =
-        currentUserRequestedFriendship && !userToDisplayRequestedFriendship;
-
-      let FriendRequestButton = () => {
-        let buttonText;
-
-        if (areFriends) {
-          buttonText = 'Remove Friend';
-        } else if (heRequested) {
-          buttonText = 'Accept';
-        } else if (youRequested) {
-          buttonText = 'Cancel';
-        } else {
-          buttonText = 'Add';
-        }
-
-        return (
-          <button
-            onClick={() => {
-              let promise;
-              if (areFriends || youRequested) {
-                promise = onFriendDelete(user._id);
-              } else {
-                promise = onFriendAdd(user._id);
-              }
-
-              promise.then(() => {
-                dispatch(fetchAccount());
-              });
-            }}
-          >
-            {buttonText}
-          </button>
-        );
-      };
-
-      return (
-        <div key={user._id}>
-          {user.name}
-          <FriendRequestButton />
-        </div>
-      );
-    });
+    return users.map((user) => (
+      <UserBlock
+        key={user._id}
+        user={user}
+        friendOps={{ onFriendAdd, onFriendDelete }}
+      />
+    ));
   }
 
   return (
