@@ -86,14 +86,16 @@ controller.friends = {
       let currentUser = req.user;
       let idOfUser = req.params.id;
 
-      if (idOfUser !== currentUser._id.toString())
+      if (
+        idOfUser !== currentUser._id.toString() &&
+        friendToDelete !== currentUser._id.toString()
+      )
         return next(
           400,
           createError("You can't delete friends on behalf of other people!")
         );
 
-      currentUser
-        .update({ $pull: { friends: friendToDelete } })
+      FriendRequest.findOneAndDelete({ from: idOfUser, to: friendToDelete })
         .then(() => {
           res.json({ status: true });
         })
