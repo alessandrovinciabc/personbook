@@ -39,6 +39,8 @@ controller.specificUser = {
   },
 };
 
+const FriendRequest = require('../models/FriendRequest');
+
 controller.friends = {
   POST: [
     isAuthenticated,
@@ -54,9 +56,9 @@ controller.friends = {
         return next(createError(400, "You can't be friends with yourself!"));
       }
 
-      User.findByIdAndUpdate(id, { $addToSet: { friends: newFriend } })
-        .then(() => {
-          res.json({ status: true });
+      FriendRequest.create({ from: req.user._id, to: newFriend })
+        .then((newDoc) => {
+          res.json({ status: true, result: newDoc });
         })
         .catch((err) => {
           return next(err);
