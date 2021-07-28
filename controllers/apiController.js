@@ -42,6 +42,20 @@ controller.specificUser = {
 const FriendRequest = require('../models/FriendRequest');
 
 controller.friends = {
+  GET: [
+    isAuthenticated,
+    (req, res, next) => {
+      let { id } = req.params;
+
+      FriendRequest.find({ $or: [{ from: id }, { to: id }] })
+        .then((friends) => {
+          res.json({ userId: id, friends });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
   POST: [
     isAuthenticated,
     (req, res, next) => {

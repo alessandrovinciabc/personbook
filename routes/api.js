@@ -6,7 +6,10 @@ const controller = require('../controllers/apiController');
 router.get('/user', controller.user.GET);
 router.get('/user/:id', controller.specificUser.GET);
 
-router.post('/user/:id/friends', controller.friends.POST);
+router
+  .route('/user/:id/friends')
+  .get(controller.friends.GET)
+  .post(controller.friends.POST);
 router.delete('/user/:id/friends/:friendid', controller.friends.DELETE);
 
 /* Related to Authentication */
