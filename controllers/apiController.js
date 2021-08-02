@@ -48,8 +48,47 @@ controller.friends = {
       let { id } = req.params;
 
       FriendRequest.find({ $or: [{ from: id }, { to: id }] })
-        .then((friends) => {
-          res.json({ userId: id, friends });
+        .then((requests) => {
+          let friends = [],
+            youRequested = [],
+            theyRequested = [];
+
+          requests.forEach((request) => {
+            let hasMirrors = false;
+
+            requests.forEach((requestToCompare) => {
+              let areMirrored =
+                requestToCompare.from.equals(request.to) &&
+                requestToCompare.to.equals(request.from);
+
+              if (areMirrored) {
+                let idOfOtherUser = request.to.equals(id)
+                  ? request.from
+                  : request.to;
+
+                if (!friends.includes(idOfOtherUser.toString()))
+                  friends.push(idOfOtherUser.toString());
+
+                hasMirrors = true;
+              }
+            });
+
+            if (hasMirrors) return;
+
+            if (request.from.equals(id)) {
+              youRequested.push(request.to.toString());
+            } else if (request.to.equals(id)) {
+              theyRequested.push(request.from.toString());
+            }
+          });
+
+          res.json({
+            userId: id,
+            requests,
+            friends,
+            youRequested,
+            theyRequested,
+          });
         })
         .catch((err) => {
           next(err);
