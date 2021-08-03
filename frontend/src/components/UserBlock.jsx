@@ -3,32 +3,24 @@ import React from 'react';
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentUser, fetchAccount } from '../features/auth/authSlice';
+import { selectRelationships } from '../features/friendsSlice';
 
 function UserBlock({ user, friendOps }) {
   let { onFriendAdd, onFriendDelete } = friendOps;
 
   const auth = useSelector(selectCurrentUser);
+  const relationships = useSelector(selectRelationships);
   const dispatch = useDispatch();
 
   if (user._id.toString() === auth._id.toString())
     return <div key={user._id}>{user.name}</div>;
 
-  let currentUserRequestedFriendship = auth.friends.includes(
-    user._id.toString()
-  );
+  let userStringId = user._id.toString();
 
-  let userToDisplayRequestedFriendship = user.friends.includes(
-    auth._id.toString()
-  );
-
-  let areFriends =
-    currentUserRequestedFriendship && userToDisplayRequestedFriendship;
-
-  let heRequested =
-    !currentUserRequestedFriendship && userToDisplayRequestedFriendship;
-
-  let youRequested =
-    currentUserRequestedFriendship && !userToDisplayRequestedFriendship;
+  let areFriends, heRequested, youRequested;
+  areFriends = relationships.friends.includes(userStringId);
+  heRequested = relationships.theyRequested.includes(userStringId);
+  youRequested = relationships.youRequested.includes(userStringId);
 
   let FriendRequestButton = () => {
     let buttonText;
@@ -54,6 +46,7 @@ function UserBlock({ user, friendOps }) {
             promise = onFriendAdd(user._id);
           }
 
+          //Update when user adds/removes a friend
           promise.then(() => {
             dispatch(fetchAccount());
           });
