@@ -7,7 +7,10 @@ export const fetchAccount = createAsyncThunk(
   'auth/fetchAccount',
   async (_, thunkAPI) => {
     const response = await axios.get('/api/account');
+
+    if (response.data.user == null) return null;
     thunkAPI.dispatch(fetchFriends(response.data.user._id.toString()));
+
     return response.data.user;
   }
 );
@@ -32,6 +35,7 @@ const authSlice = createSlice({
     },
     [fetchAccount.rejected]: (state, action) => {
       state.status = 'rejected';
+      state.error = action.error;
     },
   },
 });
