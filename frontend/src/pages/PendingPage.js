@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import Navbar from '../components/Navbar.jsx';
 
@@ -13,15 +13,20 @@ import UserBlock from '../components/UserBlock';
 
 import axios from 'axios';
 
-function FriendsPage(props) {
+function PendingPage(props) {
   let auth = useSelector(selectCurrentUser);
   let status = useSelector(selectStatus);
-  let { friends } = useSelector(selectRelationships);
+  let { theyRequested, youRequested } = useSelector(selectRelationships);
+  let pending = useMemo(
+    () => [...theyRequested, ...youRequested],
+    [theyRequested, youRequested]
+  );
+
   let [users, setUsers] = useState([]);
 
   useEffect(() => {
     let fetchAndSetState = async () => {
-      let fetchedFriends = friends.map((friend) =>
+      let fetchedFriends = pending.map((friend) =>
         axios.get(`/api/user/${friend}`)
       );
       Promise.all(fetchedFriends).then((values) => {
@@ -33,7 +38,7 @@ function FriendsPage(props) {
       });
     };
     fetchAndSetState();
-  }, [friends]);
+  }, [pending]);
 
   function onFriendAdd(idOfRequestedFriend) {
     return axios.post(`/api/user/${auth._id}/friends`, {
@@ -59,7 +64,7 @@ function FriendsPage(props) {
 
   return (
     <>
-      <Navbar isLoggedIn={true} title="Friends" />
+      <Navbar isLoggedIn={true} title="Pending Requests" />
       <br />
       <br />
       {status !== 'fulfilled' ? <Loader /> : displayUsers()}
@@ -67,4 +72,4 @@ function FriendsPage(props) {
   );
 }
 
-export default FriendsPage;
+export default PendingPage;

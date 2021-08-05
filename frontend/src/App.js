@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage';
 import Page404 from './pages/Page404';
 import UserListPage from './pages/UserListPage';
 import FriendsPage from './pages/FriendsPage';
+import PendingPage from './pages/PendingPage';
 
 function App() {
   let auth = useSelector(selectCurrentUser);
@@ -39,6 +40,9 @@ function App() {
         </Route>
         <Route path="/friends" exact>
           <FriendsPage />
+        </Route>
+        <Route path="/friends/pending" exact>
+          <PendingPage />
         </Route>
       </Switch>
     </BrowserRouter>
