@@ -24,6 +24,26 @@ controller.user = {
   GET: [isAuthenticated, paginateMongoose(User)],
 };
 
+/* Posts */
+const Post = require('../models/Post');
+controller.post = {
+  POST: [
+    isAuthenticated,
+    (req, res, next) => {
+      let authorId = req.user._id.toString();
+      let textForNewPost = req.body.text;
+
+      Post.create({ author: authorId, text: textForNewPost })
+        .then((newDoc) => {
+          res.json(newDoc);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+};
+
 controller.specificUser = {
   GET: async (req, res, next) => {
     let { id } = req.params;

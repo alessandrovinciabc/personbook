@@ -12,6 +12,9 @@ router
   .post(controller.friends.POST);
 router.delete('/user/:id/friends/:friendid', controller.friends.DELETE);
 
+/* Posts */
+router.post('/post', controller.post.POST);
+
 /* Related to Authentication */
 router.get('/account', controller.account.GET);
 router.get('/auth/logout', controller.auth.logout.GET);
