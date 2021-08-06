@@ -1,16 +1,12 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import Navbar from '../components/Navbar.jsx';
 import CenteredContainer from '../components/containers/CenteredContainer';
+import AbsolutelyCentered from '../components/wrappers/AbsolutelyCentered';
 import Card from '../components/containers/Card';
 
 import GoogleLogo from '../assets/images/google.png';
 import GithubLogo from '../assets/images/github.png';
-
-// Redux
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../features/auth/authSlice';
 
 let LoginHeader = styled.h1`
   font-weight: bold;
@@ -53,13 +49,11 @@ let SocialLogo = styled.img`
 `;
 
 function LoginPage(props) {
-  let auth = useSelector(selectCurrentUser);
   return (
-    <>
-      <Navbar isLoggedIn={!!auth} title="Login" />
+    <AbsolutelyCentered>
       <CenteredContainer>
         <Card>
-          <LoginHeader>Welcome to PersonBook</LoginHeader>
+          <LoginHeader>Welcome to PersonBook🧑📕</LoginHeader>
           <LoginSubHeader>Please, select an option:</LoginSubHeader>
           <LoginOption href="/api/auth/github">
             <SocialLogo src={GithubLogo} />
@@ -71,7 +65,7 @@ function LoginPage(props) {
           </LoginOption>
         </Card>
       </CenteredContainer>
-    </>
+    </AbsolutelyCentered>
   );
 }
 
