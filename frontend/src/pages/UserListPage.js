@@ -2,20 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 import Navbar from '../components/Navbar.jsx';
 
-// Redux
-import { useSelector } from 'react-redux';
-import { selectCurrentUser } from '../features/auth/authSlice';
-
 // Components
 import Loader from '../components/Loader';
 import PaginationBar from '../components/PaginationBar';
-import UserBlock from '../components/UserBlock';
+import UsersList from '../components/UsersList.jsx';
 
 import axios from 'axios';
 
 function UserListPage(props) {
-  let auth = useSelector(selectCurrentUser);
-
   let [pageNumber, setPageNumber] = useState(1);
   let [maxQuota, setMaxQuota] = useState(0);
   let [usersPerPage, setUsersPerPage] = useState(0);
@@ -41,33 +35,11 @@ function UserListPage(props) {
       });
   }, [pageNumber]);
 
-  function onFriendAdd(idOfRequestedFriend) {
-    return axios.post(`/api/user/${auth._id}/friends`, {
-      newFriend: idOfRequestedFriend,
-    });
-  }
-
-  function onFriendDelete(idOfFriendToRemove) {
-    return axios.delete(`/api/user/${auth._id}/friends/${idOfFriendToRemove}`);
-  }
-
-  function displayUsers() {
-    if (!(users.length > 0)) return;
-
-    return users.map((user) => (
-      <UserBlock
-        key={user._id}
-        user={user}
-        friendOps={{ onFriendAdd, onFriendDelete }}
-      />
-    ));
-  }
-
   return (
     <>
       <Navbar isLoggedIn={true} title="Homepage" />
       <div>
-        {status !== 'fulfilled' ? <Loader /> : displayUsers()}
+        {status !== 'fulfilled' ? <Loader /> : <UsersList users={users} />}
         <br />
         <br />
         {

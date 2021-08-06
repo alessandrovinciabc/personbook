@@ -4,17 +4,16 @@ import Navbar from '../components/Navbar.jsx';
 
 // Redux
 import { useSelector } from 'react-redux';
-import { selectCurrentUser, selectStatus } from '../features/auth/authSlice';
+import { selectStatus } from '../features/auth/authSlice';
 import { selectRelationships } from '../features/friendsSlice.js';
 
 // Components
 import Loader from '../components/Loader';
-import UserBlock from '../components/UserBlock';
+import UsersList from '../components/UsersList';
 
 import axios from 'axios';
 
 function PendingPage(props) {
-  let auth = useSelector(selectCurrentUser);
   let status = useSelector(selectStatus);
   let { theyRequested, youRequested } = useSelector(selectRelationships);
   let pending = useMemo(
@@ -40,34 +39,12 @@ function PendingPage(props) {
     fetchAndSetState();
   }, [pending]);
 
-  function onFriendAdd(idOfRequestedFriend) {
-    return axios.post(`/api/user/${auth._id}/friends`, {
-      newFriend: idOfRequestedFriend,
-    });
-  }
-
-  function onFriendDelete(idOfFriendToRemove) {
-    return axios.delete(`/api/user/${auth._id}/friends/${idOfFriendToRemove}`);
-  }
-
-  function displayUsers() {
-    if (users.length === 0) return;
-
-    return users.map((user) => (
-      <UserBlock
-        key={user._id}
-        user={user}
-        friendOps={{ onFriendDelete, onFriendAdd }}
-      />
-    ));
-  }
-
   return (
     <>
       <Navbar isLoggedIn={true} title="Pending Requests" />
       <br />
       <br />
-      {status !== 'fulfilled' ? <Loader /> : displayUsers()}
+      {status !== 'fulfilled' ? <Loader /> : <UsersList users={users} />}
     </>
   );
 }
