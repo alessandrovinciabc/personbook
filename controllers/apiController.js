@@ -87,6 +87,17 @@ controller.post = {
         });
     },
   ],
+  UPDATE: [
+    isAuthenticated,
+    (req, res, next) => {
+      let requestedPostId = req.params.id;
+      let newText = req.body.text;
+
+      Post.findByIdAndUpdate(requestedPostId, { text: newText })
+        .then(() => res.json({ msg: 'Succesfully updated post', status: true }))
+        .catch((err) => next(err));
+    },
+  ],
 };
 
 controller.specificUser = {

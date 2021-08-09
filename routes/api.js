@@ -17,6 +17,7 @@ router.post('/post', controller.post.POST);
 router.get('/post/:id', controller.post.GETOne);
 router.get('/user/:id/post', controller.post.GETAll);
 router.delete('/post/:id', controller.post.DELETE);
+router.put('/post/:id', controller.post.UPDATE);
 
 /* Related to Authentication */
 router.get('/account', controller.account.GET);
