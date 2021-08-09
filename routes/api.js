@@ -14,6 +14,9 @@ router.delete('/user/:id/friends/:friendid', controller.friends.DELETE);
 
 /* Posts */
 router.post('/post', controller.post.POST);
+router.get('/post/:id', controller.post.GETOne);
+router.get('/user/:id/post', controller.post.GETAll);
+router.delete('/post/:id', controller.post.DELETE);
 
 /* Related to Authentication */
 router.get('/account', controller.account.GET);

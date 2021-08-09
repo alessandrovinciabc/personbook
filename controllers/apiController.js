@@ -42,6 +42,51 @@ controller.post = {
         });
     },
   ],
+  GETOne: [
+    isAuthenticated,
+    (req, res, next) => {
+      let requestedPostId = req.params.id;
+      Post.findById(requestedPostId)
+        .then((doc) => {
+          res.json(doc);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+  GETAll: [
+    isAuthenticated,
+    (req, res, next) => {
+      let userId = req.params.id;
+
+      Post.find({ author: userId })
+        .then((posts) => res.json(posts))
+        .catch((err) => next(err));
+    },
+  ],
+  DELETE: [
+    isAuthenticated,
+    (req, res, next) => {
+      let currentUserId = req.user._id.toString();
+      let requestedPostId = req.params.id;
+
+      Post.findById(requestedPostId)
+        .then((found) => {
+          if (found.author.toString() !== currentUserId)
+            next(createError(400, "Can't delete other people's posts!"));
+
+          return found
+            .deleteOne()
+            .then(() =>
+              res.json({ msg: 'Succesfully removed post', status: true })
+            );
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
 };
 
 controller.specificUser = {
