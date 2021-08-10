@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+import UsersIcon from '../assets/icons/users.svg';
+import ProfileIcon from '../assets/icons/profile.svg';
+import HomeIcon from '../assets/icons/home.svg';
+
 let Wrapper = styled.div`
   background-color: hsl(204, 86%, 46%);
   height: 4rem;
@@ -51,6 +55,49 @@ let PageTitle = styled.h2`
   color: white;
 `;
 
+let NavigationIcon = styled.img`
+  height: 2.2rem;
+  padding: 0 0.5rem;
+
+  border-radius: 5px;
+
+  &:hover {
+    background-color: hsl(204, 86%, 42%);
+
+    cursor: pointer;
+  }
+`;
+let Tooltipped = styled.span`
+  position: relative;
+
+  &::after {
+    content: '';
+    opacity: 0;
+    transition: opacity 0.1s ease-out;
+  }
+
+  &:hover::after {
+    content: ${(props) => `"${props.text}"` || '"default tooltip"'};
+
+    opacity: 1;
+
+    position: absolute;
+    bottom: -1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: grid;
+    place-items: center;
+
+    padding: 0.3rem 0.5rem;
+    width: max-content;
+
+    background-color: #dadada;
+    color: black;
+    border-radius: 5px;
+  }
+`;
+
 function Navbar({ isLoggedIn, title }) {
   return (
     <Wrapper>
@@ -58,7 +105,23 @@ function Navbar({ isLoggedIn, title }) {
       {isLoggedIn && (
         <>
           <NavigationBox>
-            <div>home, users, profile</div>
+            <div>
+              <a href="/">
+                <Tooltipped text="Home">
+                  <NavigationIcon src={HomeIcon} alt="Home" />
+                </Tooltipped>
+              </a>
+              <a href="/users">
+                <Tooltipped text="Users">
+                  <NavigationIcon src={UsersIcon} alt="Users" />
+                </Tooltipped>
+              </a>
+              <a href="/profile">
+                <Tooltipped text="Profile">
+                  <NavigationIcon src={ProfileIcon} alt="Profile" />
+                </Tooltipped>
+              </a>
+            </div>
             <PageTitle>{title}</PageTitle>
           </NavigationBox>
           <a href="/api/auth/logout">Logout</a>
