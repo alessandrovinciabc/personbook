@@ -48,6 +48,9 @@ function App() {
         <Route path="/profile" exact>
           <ProfilePage userId={auth?._id.toString()} />
         </Route>
+        <Route path="/profile/:id" exact>
+          <ProfilePage userId={auth?._id.toString()} />
+        </Route>
       </Switch>
     </BrowserRouter>
   );

@@ -7,7 +7,14 @@ import Loader from '../components/Loader';
 
 import axios from 'axios';
 
+import { useParams } from 'react-router-dom';
+
 function ProfilePage({ userId }) {
+  //If no prop is passed, then use the
+  //parameter from the router
+  let { id } = useParams();
+  let userToFetch = userId || id;
+
   let [userStatus, setUserStatus] = useState('idle');
   let [user, setUser] = useState(null);
 
@@ -15,14 +22,14 @@ function ProfilePage({ userId }) {
   let [numberStatus, setNumberStatus] = useState('idle');
 
   useEffect(() => {
-    if (userId == null) return;
+    if (userToFetch == null) return;
     if (userStatus !== 'idle') return;
 
     setUserStatus('pending');
 
     let fetchUserAndSetState = async () => {
       axios
-        .get(`/api/user/${userId}`)
+        .get(`/api/user/${userToFetch}`)
         .then((response) => {
           if (response.data.authId == null) return;
           setUser(response.data);
@@ -34,7 +41,7 @@ function ProfilePage({ userId }) {
     };
 
     fetchUserAndSetState();
-  }, [userId, userStatus]);
+  }, [userToFetch, userStatus]);
 
   useEffect(() => {
     if (user == null) return;
@@ -57,7 +64,13 @@ function ProfilePage({ userId }) {
       <Navbar isLoggedIn={true} title="Profile" />
       <br />
       <br />
-      <div>{user && user.name}</div>
+      <div>
+        {user && (
+          <>
+            {user.name} {user._id}
+          </>
+        )}
+      </div>
       {numberStatus !== 'fulfilled' ? (
         <Loader />
       ) : (
