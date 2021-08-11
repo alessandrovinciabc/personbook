@@ -21,6 +21,8 @@ function ProfilePage({ userId }) {
   let [numberOfFriends, setNumberOfFriends] = useState(0);
   let [numberStatus, setNumberStatus] = useState('idle');
 
+  let [posts, setPosts] = useState([]);
+
   useEffect(() => {
     if (userToFetch == null) return;
     if (userStatus !== 'idle') return;
@@ -49,7 +51,7 @@ function ProfilePage({ userId }) {
     setNumberStatus('pending');
 
     axios
-      .get(`/api/user/${userId}/friends`)
+      .get(`/api/user/${userToFetch}/friends`)
       .then((response) => {
         setNumberOfFriends(response.data.friends.length);
         setNumberStatus('fulfilled');
@@ -57,7 +59,15 @@ function ProfilePage({ userId }) {
       .catch((err) => {
         setNumberStatus('rejected');
       });
-  }, [user, userId, numberStatus]);
+  }, [user, userToFetch, numberStatus]);
+
+  useEffect(() => {
+    if (user == null) return;
+
+    axios.get(`/api/user/${userToFetch}/post`).then((response) => {
+      setPosts(response.data);
+    });
+  }, [user, userToFetch]);
 
   return (
     <>
@@ -76,6 +86,20 @@ function ProfilePage({ userId }) {
       ) : (
         <div>
           {numberOfFriends} {numberOfFriends === 1 ? 'friend' : 'friends'}
+          <br />
+          Posts: {posts.length}
+          <br />
+          <br />
+          {posts.map((post) => {
+            return (
+              <div key={post._id}>
+                {post.createdAt}
+                <br />
+                {post.text} <br />
+                <br />
+              </div>
+            );
+          })}
         </div>
       )}
     </>

@@ -49,7 +49,7 @@ function App() {
           <ProfilePage userId={auth?._id.toString()} />
         </Route>
         <Route path="/profile/:id" exact>
-          <ProfilePage userId={auth?._id.toString()} />
+          <ProfilePage />
         </Route>
       </Switch>
     </BrowserRouter>
