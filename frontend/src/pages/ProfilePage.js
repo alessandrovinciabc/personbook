@@ -33,7 +33,7 @@ function ProfilePage({ userId }) {
       axios
         .get(`/api/user/${userToFetch}`)
         .then((response) => {
-          if (response.data.authId == null) return;
+          if (response.data._id.toString() == null) return;
           setUser(response.data);
           setUserStatus('fulfilled');
         })

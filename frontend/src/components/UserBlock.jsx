@@ -59,7 +59,7 @@ function UserBlock({ user, friendOps }) {
 
   return (
     <div>
-      {user.name}
+      <a href={`/profile/${user._id}`}>{user.name}</a>
       <FriendRequestButton />
     </div>
   );
