@@ -61,6 +61,7 @@ controller.post = {
       let userId = req.params.id;
 
       Post.find({ author: userId })
+        .sort('-createdAt')
         .then((posts) => res.json(posts))
         .catch((err) => next(err));
     },
