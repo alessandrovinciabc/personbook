@@ -40,28 +40,24 @@ let PageTitle = styled.h2`
   color: white;
 `;
 
-let LogoutButton = () => {
-  let StyledImg = styled.img`
-    height: 2.8rem;
-    padding: 0 0.5rem;
+let LogoutButton = styled.img`
+  height: 2.8rem;
+  padding: 0 0.5rem;
 
-    border-radius: 5px;
+  border-radius: 5px;
 
-    background-color: white;
+  background-color: white;
 
-    &:hover {
-      background-color: hsl(0, 0%, 90%);
+  &:hover {
+    background-color: hsl(0, 0%, 90%);
 
-      cursor: pointer;
-    }
+    cursor: pointer;
+  }
 
-    @media only screen and (max-width: 450px) {
-      height: 1.5rem;
-    }
-  `;
-
-  return <StyledImg src={LogoutIcon} />;
-};
+  @media only screen and (max-width: 450px) {
+    height: 1.5rem;
+  }
+`;
 
 let NavigationIcon = styled.img`
   height: 2.2rem;
@@ -135,7 +131,7 @@ function Navbar({ isLoggedIn, title }) {
           </NavigationBox>
           <a href="/api/auth/logout">
             <Tooltipped text="Logout">
-              <LogoutButton />
+              <LogoutButton src={LogoutIcon} />
             </Tooltipped>
           </a>
         </>
