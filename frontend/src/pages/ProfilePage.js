@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.jsx';
 
 // Components
 import Loader from '../components/Loader';
+import Post from '../components/Post';
 
 import axios from 'axios';
 
@@ -90,16 +91,9 @@ function ProfilePage({ userId }) {
           Posts: {posts.length}
           <br />
           <br />
-          {posts.map((post) => {
-            return (
-              <div key={post._id}>
-                {post.createdAt}
-                <br />
-                {post.text} <br />
-                <br />
-              </div>
-            );
-          })}
+          {posts.map((post) => (
+            <Post key={post._id} data={post} />
+          ))}
         </div>
       )}
     </>
