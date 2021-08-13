@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 // Components
 import Loader from '../components/Loader';
 import Post from '../components/Post';
+import PostForm from '../components/PostForm';
 
 import axios from 'axios';
 
@@ -89,6 +90,13 @@ function ProfilePage({ userId }) {
           {numberOfFriends} {numberOfFriends === 1 ? 'friend' : 'friends'}
           <br />
           Posts: {posts.length}
+          <br />
+          <br />
+          <PostForm
+            onConfirm={() => {
+              setUserStatus('idle');
+            }}
+          />
           <br />
           <br />
           {posts.map((post) => (
