@@ -5,16 +5,23 @@ import { fetchAccount } from '../features/auth/authSlice';
 
 import axios from 'axios';
 
-function PostForm({ onConfirm }) {
-  let [text, setText] = useState('');
+function PostForm({ onConfirm, onCancel, post }) {
+  let [text, setText] = useState(post?.text || '');
 
   const dispatch = useDispatch();
 
+  let postId = post?._id.toString();
+
   async function handlePost() {
-    await axios.post('/api/post', { text });
+    if (postId) {
+      await axios.put(`/api/post/${postId}`, { text });
+    } else {
+      await axios.post('/api/post', { text });
+    }
+
     setText('');
 
-    onConfirm(); //Callback provided as prop
+    onConfirm?.(text); //Callback provided as prop
 
     dispatch(fetchAccount()); //Trigger update to show new post
   }
@@ -31,8 +38,9 @@ function PostForm({ onConfirm }) {
       ></textarea>
       <br />
       <button disabled={text.trim() === ''} onClick={handlePost}>
-        Post
+        {postId ? 'Confirm' : 'Post'}
       </button>
+      {postId && <button onClick={onCancel}>Cancel</button>}
     </div>
   );
 }
