@@ -8,11 +8,19 @@ import LogoutIcon from '../assets/icons/logout.svg';
 let Wrapper = styled.div`
   background-color: hsl(204, 86%, 46%);
   height: 4rem;
+  width: 100%;
+
+  position: fixed;
+  top: 0;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
+`;
+
+let Spacer = styled.div`
+  height: 4rem;
 `;
 
 let Logo = styled.h1`
@@ -105,38 +113,41 @@ let Tooltipped = styled.span`
 
 function Navbar({ isLoggedIn, title }) {
   return (
-    <Wrapper>
-      <Logo>🧑📕</Logo>
-      {isLoggedIn && (
-        <>
-          <NavigationBox>
-            <div>
-              <a href="/">
-                <Tooltipped text="Home">
-                  <NavigationIcon src={HomeIcon} alt="Home" />
-                </Tooltipped>
-              </a>
-              <a href="/users">
-                <Tooltipped text="Users">
-                  <NavigationIcon src={UsersIcon} alt="Users" />
-                </Tooltipped>
-              </a>
-              <a href="/profile">
-                <Tooltipped text="Profile">
-                  <NavigationIcon src={ProfileIcon} alt="Profile" />
-                </Tooltipped>
-              </a>
-            </div>
-            <PageTitle>{title}</PageTitle>
-          </NavigationBox>
-          <a href="/api/auth/logout">
-            <Tooltipped text="Logout">
-              <LogoutButton src={LogoutIcon} />
-            </Tooltipped>
-          </a>
-        </>
-      )}
-    </Wrapper>
+    <>
+      <Wrapper>
+        <Logo>🧑📕</Logo>
+        {isLoggedIn && (
+          <>
+            <NavigationBox>
+              <div>
+                <a href="/">
+                  <Tooltipped text="Home">
+                    <NavigationIcon src={HomeIcon} alt="Home" />
+                  </Tooltipped>
+                </a>
+                <a href="/users">
+                  <Tooltipped text="Users">
+                    <NavigationIcon src={UsersIcon} alt="Users" />
+                  </Tooltipped>
+                </a>
+                <a href="/profile">
+                  <Tooltipped text="Profile">
+                    <NavigationIcon src={ProfileIcon} alt="Profile" />
+                  </Tooltipped>
+                </a>
+              </div>
+              <PageTitle>{title}</PageTitle>
+            </NavigationBox>
+            <a href="/api/auth/logout">
+              <Tooltipped text="Logout">
+                <LogoutButton src={LogoutIcon} />
+              </Tooltipped>
+            </a>
+          </>
+        )}
+      </Wrapper>
+      <Spacer />
+    </>
   );
 }
 
