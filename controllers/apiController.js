@@ -75,7 +75,7 @@ controller.post = {
       Post.findById(requestedPostId)
         .then((found) => {
           if (found.author.toString() !== currentUserId)
-            next(createError(400, "Can't delete other people's posts!"));
+            return next(createError(400, "Can't delete other people's posts!"));
 
           return found
             .deleteOne()
