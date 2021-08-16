@@ -92,15 +92,32 @@ function ProfilePage({ userId }) {
           Posts: {posts.length}
           <br />
           <br />
-          <PostForm
-            onConfirm={() => {
-              setUserStatus('idle');
-            }}
-          />
+          {user?._id.toString() === userId && (
+            <PostForm
+              onConfirm={() => {
+                setUserStatus('idle');
+              }}
+            />
+          )}
           <br />
           <br />
           {posts.map((post) => (
-            <Post key={post._id} data={post} />
+            <Post
+              onDelete={(id) => {
+                setPosts((posts) => {
+                  let copy = posts.slice();
+
+                  copy.splice(
+                    posts.findIndex((el) => el._id.toString() === id),
+                    1
+                  );
+
+                  return copy;
+                });
+              }}
+              key={post._id}
+              data={post}
+            />
           ))}
         </div>
       )}
