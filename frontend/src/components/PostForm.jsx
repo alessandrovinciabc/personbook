@@ -21,13 +21,14 @@ function PostForm({ onConfirm }) {
 
   return (
     <div>
-      <input
+      <textarea
         type="text"
         value={text}
+        maxLength="1024"
         onChange={(e) => {
           setText(e.target.value);
         }}
-      />
+      ></textarea>
       <br />
       <button disabled={text.trim() === ''} onClick={handlePost}>
         Post
