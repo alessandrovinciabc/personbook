@@ -15,8 +15,10 @@ let Box = styled.div`
   background-color: white;
 
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+
   padding: 0 2rem;
 
   z-index: 200;
@@ -35,6 +37,17 @@ let Mask = styled.div`
   background-color: rgba(0, 0, 0, 0.2);
 `;
 
+let ControlsBox = styled.div`
+  margin-top: 1rem;
+
+  > button {
+    margin: 0 0.5rem;
+    padding: 0.2rem;
+  }
+`;
+
+let ContentBox = styled.div``;
+
 function Modal({ children, onConfirm, onCancel, display }) {
   useEffect(() => {
     if (display) {
@@ -50,9 +63,11 @@ function Modal({ children, onConfirm, onCancel, display }) {
     <>
       <Mask />
       <Box>
-        {children}
-        <button onClick={onConfirm}>Confirm</button>
-        <button onClick={onCancel}>Cancel</button>
+        <ContentBox>{children}</ContentBox>
+        <ControlsBox>
+          <button onClick={onConfirm}>Confirm</button>
+          <button onClick={onCancel}>Cancel</button>
+        </ControlsBox>
       </Box>
     </>
   );
