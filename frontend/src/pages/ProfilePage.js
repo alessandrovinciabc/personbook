@@ -11,6 +11,15 @@ import axios from 'axios';
 
 import { useParams } from 'react-router-dom';
 
+import styled from 'styled-components';
+
+let Separator = styled.span`
+  &::before {
+    content: '|';
+    padding: 0 10px;
+  }
+`;
+
 function ProfilePage({ userId }) {
   //If no prop is passed, then use the
   //parameter from the router
@@ -87,7 +96,15 @@ function ProfilePage({ userId }) {
         <Loader />
       ) : (
         <div>
-          {numberOfFriends} {numberOfFriends === 1 ? 'friend' : 'friends'}
+          {user?._id.toString() === userId && (
+            <>
+              <a href="/friends">
+                {numberOfFriends} {numberOfFriends === 1 ? 'friend' : 'friends'}
+              </a>
+              <Separator />
+              <a href="/friends/pending">Pending</a>
+            </>
+          )}
           <br />
           Posts: {posts.length}
           <br />
