@@ -113,6 +113,7 @@ function Post({ data, onDelete }) {
             <DropdownButton
               onClick={() => {
                 setEditMode(true);
+                setDisplayDropdown((oldState) => !oldState);
               }}
             >
               <img src={EditIcon} alt="Edit Button" />
