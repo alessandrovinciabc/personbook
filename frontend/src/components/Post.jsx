@@ -59,9 +59,14 @@ let RelativeContainer = styled.div`
 
 let PostContainer = styled.div`
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
 
-  margin: 0 auto;
+  margin: 1rem auto;
+
+  padding: 0.5rem 1rem;
+
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
 `;
 
 let Icon = styled.img`
@@ -101,6 +106,8 @@ function Post({ data, onDelete }) {
   let [text, setText] = useState(data.text);
   let [displayDeleteModal, setDisplayDeleteModal] = useState(false);
   let [displayDropdown, setDisplayDropdown] = useState(false);
+
+  const timeOfPost = new Date(data.createdAt).toDateString();
 
   function DropdownMenu() {
     return (
@@ -172,7 +179,7 @@ function Post({ data, onDelete }) {
         />
       ) : (
         <>
-          {data.createdAt}
+          <div>{timeOfPost}</div>
           <br />
           {text} <br />
           <br />
