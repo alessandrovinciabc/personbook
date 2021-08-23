@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import DeleteIcon from '../assets/icons/delete.svg';
 import EditIcon from '../assets/icons/edit.svg';
 import OptionsIcon from '../assets/icons/options.svg';
+import LikeIcon from '../assets/icons/like.svg';
+import CommentIcon from '../assets/icons/comment.svg';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -82,6 +84,17 @@ let OptionsButton = styled.button`
   }
 `;
 
+let CardTop = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+`;
+
+let CardDown = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 function Post({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
   let [editMode, setEditMode] = useState(false);
@@ -142,7 +155,9 @@ function Post({ data, onDelete }) {
         Are you sure you want to delete this post?
       </Modal>
 
-      {auth?._id.toString() === data.author.toString() && <DropdownMenu />}
+      <CardTop>
+        {auth?._id.toString() === data.author.toString() && <DropdownMenu />}
+      </CardTop>
 
       {editMode ? (
         <PostForm
@@ -161,6 +176,10 @@ function Post({ data, onDelete }) {
           <br />
           {text} <br />
           <br />
+          <CardDown>
+            <Icon src={LikeIcon} />0
+            <Icon src={CommentIcon} /> 0
+          </CardDown>
         </>
       )}
     </PostContainer>
