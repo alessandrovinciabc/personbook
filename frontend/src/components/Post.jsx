@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DeleteIcon from '../assets/icons/delete.svg';
 import EditIcon from '../assets/icons/edit.svg';
@@ -12,6 +12,7 @@ import { selectCurrentUser } from '../features/auth/authSlice';
 
 import axios from 'axios';
 
+import UserBlock from './UserBlock';
 import PostForm from './PostForm';
 import Modal from './Modal';
 import styled from 'styled-components';
@@ -93,6 +94,13 @@ let CardTop = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
+  align-items: center;
+`;
+
+let CardTopLeft = styled.div`
+  margin-right: auto;
+  display: flex;
+  align-items: center;
 `;
 
 let CardDown = styled.div`
@@ -100,14 +108,30 @@ let CardDown = styled.div`
   align-items: center;
 `;
 
+let PostTime = styled.div`
+  color: grey;
+  font-size: 0.8rem;
+
+  margin-bottom: 0.5rem;
+  margin-top: 10px;
+`;
+
 function Post({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
+  let [author, setAuthor] = useState(null);
+
   let [editMode, setEditMode] = useState(false);
   let [text, setText] = useState(data.text);
   let [displayDeleteModal, setDisplayDeleteModal] = useState(false);
   let [displayDropdown, setDisplayDropdown] = useState(false);
 
   const timeOfPost = new Date(data.createdAt).toDateString();
+
+  useEffect(() => {
+    axios.get(`/api/user/${data.author.toString()}`).then((response) => {
+      setAuthor(response.data);
+    });
+  }, [data]);
 
   function DropdownMenu() {
     return (
@@ -163,6 +187,7 @@ function Post({ data, onDelete }) {
       </Modal>
 
       <CardTop>
+        <CardTopLeft>{author && <UserBlock user={author} />}</CardTopLeft>
         {auth?._id.toString() === data.author.toString() && <DropdownMenu />}
       </CardTop>
 
@@ -179,7 +204,7 @@ function Post({ data, onDelete }) {
         />
       ) : (
         <>
-          <div>{timeOfPost}</div>
+          <PostTime>{timeOfPost}</PostTime>
           <br />
           {text} <br />
           <br />
