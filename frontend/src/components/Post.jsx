@@ -67,7 +67,9 @@ let PostContainer = styled.div`
   padding: 0.5rem 1rem;
 
   border-radius: 5px;
-  border: 2px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+  background-color: white;
 `;
 
 let Icon = styled.img`
