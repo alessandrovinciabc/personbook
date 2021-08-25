@@ -26,6 +26,138 @@ controller.user = {
 
 /* Posts */
 const Post = require('../models/Post');
+const Like = require('../models/Like');
+const Comment = require('../models/Comment');
+controller.likePost = {
+  POST: [
+    isAuthenticated,
+    (req, res, next) => {
+      let userId = req.user._id.toString();
+      let postId = req.params.id;
+
+      Like.findOneAndUpdate(
+        { userId, postId },
+        { userId, postId },
+        { upsert: true }
+      )
+        .then((newDoc) => {
+          res.json(newDoc);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+  GET: [
+    isAuthenticated,
+    (req, res, next) => {
+      Like.find({ postId: req.params.id })
+        .then((likes) => {
+          res.json(likes);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+  DELETE: [
+    isAuthenticated,
+    (req, res, next) => {
+      Like.findOneAndDelete({
+        postId: req.params.id,
+        userId: req.user._id.toString(),
+      })
+        .then(() => {
+          res.json({ msg: 'success' });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+};
+
+controller.commentPost = {
+  POST: [
+    isAuthenticated,
+    (req, res, next) => {
+      let userId = req.user._id.toString();
+      let postId = req.params.id;
+
+      let text = req.body.text;
+
+      Comment.create({ userId, postId, text })
+        .then((newDoc) => {
+          res.json(newDoc);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+  PUT: [
+    isAuthenticated,
+    (req, res, next) => {
+      let commentId = req.params.commentid;
+      let currentUserId = req.user._id.toString();
+
+      let newText = req.body.text;
+
+      Comment.findById(commentId)
+        .then((found) => {
+          if (found.userId.toString() !== currentUserId)
+            return next(
+              createError(400, "Can't edit other people's comments!")
+            );
+
+          return found
+            .update({ text: newText })
+            .then(() => res.json({ msg: 'Successful edit', status: true }));
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+  GET: [
+    isAuthenticated,
+    (req, res, next) => {
+      Comment.find({ postId: req.params.id })
+        .then((comments) => {
+          res.json(comments);
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+  DELETE: [
+    isAuthenticated,
+    (req, res, next) => {
+      let commentId = req.params.commentid;
+
+      let currentUser = req.user._id.toString();
+
+      Comment.findById(commentId)
+        .then((found) => {
+          if (found.userId.toString() !== currentUser)
+            return next(
+              createError(400, "Can't delete other people's comments!")
+            );
+
+          return found
+            .deleteOne()
+            .then(() =>
+              res.json({ msg: 'Successfully removed comment', status: true })
+            );
+        })
+        .catch((err) => {
+          next(err);
+        });
+    },
+  ],
+};
+
 controller.post = {
   POST: [
     isAuthenticated,
@@ -80,7 +212,7 @@ controller.post = {
           return found
             .deleteOne()
             .then(() =>
-              res.json({ msg: 'Succesfully removed post', status: true })
+              res.json({ msg: 'Successfully removed post', status: true })
             );
         })
         .catch((err) => {
@@ -95,7 +227,9 @@ controller.post = {
       let newText = req.body.text;
 
       Post.findByIdAndUpdate(requestedPostId, { text: newText })
-        .then(() => res.json({ msg: 'Succesfully updated post', status: true }))
+        .then(() =>
+          res.json({ msg: 'Successfully updated post', status: true })
+        )
         .catch((err) => next(err));
     },
   ],

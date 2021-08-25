@@ -19,6 +19,23 @@ router.get('/user/:id/post', controller.post.GETAll);
 router.delete('/post/:id', controller.post.DELETE);
 router.put('/post/:id', controller.post.UPDATE);
 
+/* Likes */
+router
+  .route('/post/:id/like')
+  .get(controller.likePost.GET)
+  .post(controller.likePost.POST)
+  .delete(controller.likePost.DELETE);
+
+/*Comments */
+router
+  .route('/post/:id/comment')
+  .get(controller.commentPost.GET)
+  .post(controller.commentPost.POST);
+router
+  .route('/post/:id/comment/:commentid')
+  .put(controller.commentPost.PUT)
+  .delete(controller.commentPost.DELETE);
+
 /* Related to Authentication */
 router.get('/account', controller.account.GET);
 router.get('/auth/logout', controller.auth.logout.GET);
