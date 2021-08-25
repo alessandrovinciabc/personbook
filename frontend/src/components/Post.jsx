@@ -116,6 +116,11 @@ let PostTime = styled.div`
   margin-top: 10px;
 `;
 
+let PostText = styled.div`
+  word-wrap: break-word;
+  margin: 1rem 0;
+`;
+
 function Post({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
   let [author, setAuthor] = useState(null);
@@ -205,9 +210,7 @@ function Post({ data, onDelete }) {
       ) : (
         <>
           <PostTime>{timeOfPost}</PostTime>
-          <br />
-          {text} <br />
-          <br />
+          <PostText>{text}</PostText>
           <CardDown>
             <Icon src={LikeIcon} />0
             <Icon src={CommentIcon} /> 0

@@ -17,6 +17,8 @@ let Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
+
+  z-index: 60;
 `;
 
 let Spacer = styled.div`
