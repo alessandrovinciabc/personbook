@@ -226,11 +226,18 @@ controller.post = {
       let requestedPostId = req.params.id;
       let newText = req.body.text;
 
-      Post.findByIdAndUpdate(requestedPostId, { text: newText })
-        .then(() =>
-          res.json({ msg: 'Successfully updated post', status: true })
-        )
-        .catch((err) => next(err));
+      Post.findById(requestedPostId)
+        .then((found) => {
+          if (found.author.toString() !== req.user._id.toString())
+            return next(createError(400, "Can't edit other people's posts!"));
+
+          return found
+            .update({ text: newText })
+            .then(() => res.json({ msg: 'Successful edit', status: true }));
+        })
+        .catch((err) => {
+          next(err);
+        });
     },
   ],
 };
