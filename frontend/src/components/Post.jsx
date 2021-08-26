@@ -75,6 +75,18 @@ let PostContainer = styled.div`
 let Icon = styled.img`
   width: 1.8rem;
   height: 1.8rem;
+
+  cursor: pointer;
+`;
+
+let BlueIcon = styled.img`
+  width: 1.8rem;
+  height: 1.8rem;
+
+  filter: invert(42%) sepia(84%) saturate(3740%) hue-rotate(183deg)
+    brightness(97%) contrast(87%);
+
+  cursor: pointer;
 `;
 
 let OptionsButton = styled.button`
@@ -127,16 +139,25 @@ function Post({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
   let [author, setAuthor] = useState(null);
 
+  let [likes, setLikes] = useState([]);
+
   let [editMode, setEditMode] = useState(false);
   let [text, setText] = useState(data.text);
   let [displayDeleteModal, setDisplayDeleteModal] = useState(false);
   let [displayDropdown, setDisplayDropdown] = useState(false);
 
   const timeOfPost = new Date(data.createdAt).toDateString();
+  const youLikedThisPost = !!likes.find(
+    (el) => el.userId.toString() === auth._id.toString()
+  );
 
   useEffect(() => {
     axios.get(`/api/user/${data.author.toString()}`).then((response) => {
       setAuthor(response.data);
+    });
+
+    axios.get(`/api/post/${data._id.toString()}/like`).then((response) => {
+      setLikes(response.data);
     });
   }, [data]);
 
@@ -174,6 +195,32 @@ function Post({ data, onDelete }) {
         )}
       </RelativeContainer>
     );
+  }
+
+  async function onLike() {
+    axios.post(`/api/post/${data._id.toString()}/like`).then(() => {
+      setLikes((oldState) => {
+        let copy = JSON.parse(JSON.stringify(oldState));
+        copy.push({ userId: auth._id, postId: data._id });
+
+        return copy;
+      });
+    });
+  }
+
+  async function onDislike() {
+    axios.delete(`/api/post/${data._id.toString()}/like`).then(() => {
+      setLikes((oldState) => {
+        let copy = JSON.parse(JSON.stringify(oldState));
+        let indexOfLikeToRemove = copy.findIndex(
+          (el) => el.userId.toString() === auth._id.toString()
+        );
+
+        copy.splice(indexOfLikeToRemove, 1);
+
+        return copy;
+      });
+    });
   }
 
   return (
@@ -214,7 +261,12 @@ function Post({ data, onDelete }) {
           <PostTime>{timeOfPost}</PostTime>
           <PostText>{text}</PostText>
           <CardDown>
-            <Icon src={LikeIcon} />0
+            {youLikedThisPost ? (
+              <BlueIcon onClick={onDislike} src={LikeIcon} />
+            ) : (
+              <Icon onClick={onLike} src={LikeIcon} />
+            )}
+            {likes.length}
             <Icon src={CommentIcon} /> 0
           </CardDown>
         </>
