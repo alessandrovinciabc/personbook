@@ -123,6 +123,7 @@ controller.commentPost = {
     isAuthenticated,
     (req, res, next) => {
       Comment.find({ postId: req.params.id })
+        .populate('userId')
         .then((comments) => {
           res.json(comments);
         })

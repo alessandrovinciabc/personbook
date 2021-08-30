@@ -333,7 +333,11 @@ function Post({ data, onDelete }) {
                 />
                 <div>
                   {comments.map((comment) => {
-                    return <div>{comment.text}</div>;
+                    return (
+                      <div>
+                        {comment.userId.name} - {comment.text}
+                      </div>
+                    );
                   })}
                 </div>
               </CommentSectionContainer>
