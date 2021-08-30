@@ -80,6 +80,10 @@ function ProfilePage({ userId }) {
     });
   }, [user, userToFetch]);
 
+  async function handlePost(postId, text) {
+    return await axios.post('/api/post', { text });
+  }
+
   return (
     <>
       <Navbar isLoggedIn={true} title="Profile" />
@@ -111,6 +115,7 @@ function ProfilePage({ userId }) {
           <br />
           {user?._id.toString() === userId && (
             <PostForm
+              handlePost={handlePost}
               onConfirm={() => {
                 setUserStatus('idle');
               }}

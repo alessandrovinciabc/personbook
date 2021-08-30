@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchAccount } from '../features/auth/authSlice';
 
-import axios from 'axios';
-
 import styled from 'styled-components';
 
 let PostTextArea = styled.textarea`
@@ -52,19 +50,15 @@ let Container = styled.div`
   flex-direction: column;
 `;
 
-function PostForm({ onConfirm, onCancel, post }) {
+function PostForm({ handlePost, onConfirm, onCancel, post, placeholder = '' }) {
   let [text, setText] = useState(post?.text || '');
 
   const dispatch = useDispatch();
 
   let postId = post?._id.toString();
 
-  async function handlePost() {
-    if (postId) {
-      await axios.put(`/api/post/${postId}`, { text });
-    } else {
-      await axios.post('/api/post', { text });
-    }
+  async function handlePosting() {
+    await handlePost(postId, text);
 
     setText('');
 
@@ -82,9 +76,10 @@ function PostForm({ onConfirm, onCancel, post }) {
         onChange={(e) => {
           setText(e.target.value);
         }}
+        placeholder={placeholder}
       ></PostTextArea>
       <br />
-      <PostButton disabled={text.trim() === ''} onClick={handlePost}>
+      <PostButton disabled={text.trim() === ''} onClick={handlePosting}>
         {postId ? 'Confirm' : 'Post'}
       </PostButton>
       {postId && <button onClick={onCancel}>Cancel</button>}

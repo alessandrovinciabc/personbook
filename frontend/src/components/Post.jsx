@@ -119,7 +119,7 @@ let CardTopLeft = styled.div`
 
 let CardDown = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
 `;
 
 let PostTime = styled.div`
@@ -135,11 +135,28 @@ let PostText = styled.div`
   margin: 1rem 0;
 `;
 
+let PostControl = styled.div`
+  display: flex;
+  align-items: center;
+
+  margin-right: 10px;
+`;
+
+let PostControlsContainer = styled.div`
+  display: flex;
+`;
+
+let CommentSectionContainer = styled.div`
+  padding: 1rem;
+`;
+
 function Post({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
   let [author, setAuthor] = useState(null);
 
   let [likes, setLikes] = useState([]);
+  let [comments, setComments] = useState([]);
+  let [showComments, setShowComments] = useState(false);
 
   let [editMode, setEditMode] = useState(false);
   let [text, setText] = useState(data.text);
@@ -147,6 +164,7 @@ function Post({ data, onDelete }) {
   let [displayDropdown, setDisplayDropdown] = useState(false);
 
   const timeOfPost = new Date(data.createdAt).toDateString();
+  const hourOfPost = new Date(data.createdAt).toLocaleTimeString();
   const youLikedThisPost = !!likes.find(
     (el) => el.userId.toString() === auth._id.toString()
   );
@@ -158,6 +176,10 @@ function Post({ data, onDelete }) {
 
     axios.get(`/api/post/${data._id.toString()}/like`).then((response) => {
       setLikes(response.data);
+    });
+
+    axios.get(`/api/post/${data._id.toString()}/comment`).then((response) => {
+      setComments(response.data);
     });
   }, [data]);
 
@@ -223,6 +245,12 @@ function Post({ data, onDelete }) {
     });
   }
 
+  async function onComment(_, text) {
+    return await axios.post(`/api/post/${data._id.toString()}/comment`, {
+      text,
+    });
+  }
+
   return (
     <PostContainer>
       <Modal
@@ -248,6 +276,9 @@ function Post({ data, onDelete }) {
       {editMode ? (
         <PostForm
           post={data}
+          handlePost={async (postId, text) => {
+            return await axios.put(`/api/post/${postId}`, { text });
+          }}
           onCancel={() => {
             setEditMode(false);
           }}
@@ -258,16 +289,55 @@ function Post({ data, onDelete }) {
         />
       ) : (
         <>
-          <PostTime>{timeOfPost}</PostTime>
+          <PostTime>
+            {timeOfPost} at {hourOfPost}
+          </PostTime>
           <PostText>{text}</PostText>
           <CardDown>
-            {youLikedThisPost ? (
-              <BlueIcon onClick={onDislike} src={LikeIcon} />
-            ) : (
-              <Icon onClick={onLike} src={LikeIcon} />
+            <PostControlsContainer>
+              <PostControl>
+                {youLikedThisPost ? (
+                  <BlueIcon onClick={onDislike} src={LikeIcon} />
+                ) : (
+                  <Icon onClick={onLike} src={LikeIcon} />
+                )}
+                {likes.length}
+              </PostControl>
+              <PostControl>
+                <Icon
+                  onClick={() => {
+                    setShowComments(!showComments);
+                  }}
+                  src={CommentIcon}
+                />
+                {comments.length}
+              </PostControl>
+            </PostControlsContainer>
+            {showComments && (
+              <CommentSectionContainer>
+                <PostForm
+                  placeholder="Write a comment..."
+                  handlePost={onComment}
+                  onConfirm={(newCommentText) => {
+                    setComments((oldComments) => {
+                      let copy = JSON.parse(JSON.stringify(oldComments));
+                      copy.push({
+                        text: newCommentText,
+                        userId: auth._id.toString(),
+                        postId: data._id.toString(),
+                      });
+
+                      return copy;
+                    });
+                  }}
+                />
+                <div>
+                  {comments.map((comment) => {
+                    return <div>{comment.text}</div>;
+                  })}
+                </div>
+              </CommentSectionContainer>
             )}
-            {likes.length}
-            <Icon src={CommentIcon} /> 0
           </CardDown>
         </>
       )}
