@@ -18,6 +18,21 @@ controller.account = {
       res.json({ user: req.user });
     },
   ],
+  PUT: [
+    isAuthenticated,
+    (req, res, next) => {
+      let newProfilePicture = req.body.profilePicture;
+
+      if (newProfilePicture == null)
+        return next(createError(400, 'Bad request.'));
+      User.findById(req.user._id.toString()).then((user) => {
+        user.profilePicture = newProfilePicture;
+        user.save().then(() => {
+          res.json({ status: 'success' });
+        });
+      });
+    },
+  ],
 };
 
 controller.user = {

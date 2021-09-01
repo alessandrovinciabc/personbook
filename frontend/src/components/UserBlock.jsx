@@ -16,6 +16,27 @@ let UserIconPlaceholder = styled.div`
   border-radius: 100%;
 
   border: 1px solid rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::after {
+    content: '${(props) => props.name[0]}';
+
+    font-size: 1.5rem;
+  }
+`;
+
+let UserIcon = styled.img`
+  height: 40px;
+  width: 40px;
+
+  margin-right: 5px;
+
+  border-radius: 100%;
+
+  border: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
 let CenterContainer = styled.div`
@@ -35,7 +56,12 @@ function UserBlock({ user, friendOps }) {
   if (user._id.toString() === auth._id.toString())
     return (
       <CenterContainer key={user._id}>
-        <UserIconPlaceholder />
+        {user.profilePicture ? (
+          <UserIcon src={user.profilePicture} />
+        ) : (
+          <UserIconPlaceholder name={user.name} />
+        )}
+
         {user.name}
       </CenterContainer>
     );
@@ -87,7 +113,11 @@ function UserBlock({ user, friendOps }) {
       <CenterContainer>
         <a href={`/profile/${user._id}`}>
           <CenterContainer>
-            <UserIconPlaceholder />
+            {user.profilePicture ? (
+              <UserIcon src={user.profilePicture} />
+            ) : (
+              <UserIconPlaceholder name={user.name} />
+            )}
             {user.name}
           </CenterContainer>
         </a>

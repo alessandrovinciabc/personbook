@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const UserSchema = new Schema(
   {
     name: String,
+    profilePicture: String,
     authId: {
       provider: String,
       value: String,
