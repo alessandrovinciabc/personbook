@@ -16,6 +16,7 @@ import UserBlock from './UserBlock';
 import PostForm from './PostForm';
 import Modal from './Modal';
 import styled from 'styled-components';
+import Comment from './Comment';
 
 let Dropdown = styled.div`
   display: flex;
@@ -333,11 +334,7 @@ function Post({ data, onDelete }) {
                 />
                 <div>
                   {comments.map((comment) => {
-                    return (
-                      <div>
-                        {comment.userId.name} - {comment.text}
-                      </div>
-                    );
+                    return <Comment data={comment} />;
                   })}
                 </div>
               </CommentSectionContainer>
