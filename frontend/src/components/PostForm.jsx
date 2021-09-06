@@ -58,11 +58,11 @@ function PostForm({ handlePost, onConfirm, onCancel, post, placeholder = '' }) {
   let postId = post?._id.toString();
 
   async function handlePosting() {
-    await handlePost(postId, text);
+    let newPostResponse = await handlePost(postId, text);
 
     setText('');
 
-    onConfirm?.(text); //Callback provided as prop
+    onConfirm?.(newPostResponse.data); //Callback provided as prop
 
     dispatch(fetchAccount()); //Trigger update to show new post
   }

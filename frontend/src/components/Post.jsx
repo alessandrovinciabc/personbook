@@ -319,15 +319,13 @@ function Post({ data, onDelete }) {
                 <PostForm
                   placeholder="Write a comment..."
                   handlePost={onComment}
-                  onConfirm={(newCommentText) => {
+                  onConfirm={(newComment) => {
                     setComments((oldComments) => {
                       let copy = JSON.parse(JSON.stringify(oldComments));
-                      copy.push({
-                        text: newCommentText,
-                        userId: auth,
-                        postId: data._id.toString(),
-                        createdAt: Date.now(),
-                      });
+
+                      newComment.userId = auth;
+
+                      copy.push(newComment);
 
                       return copy;
                     });
@@ -335,7 +333,27 @@ function Post({ data, onDelete }) {
                 />
                 <div>
                   {comments.map((comment) => {
-                    return <Comment data={comment} />;
+                    return (
+                      <Comment
+                        key={comment._id.toString()}
+                        data={comment}
+                        onDelete={() => {
+                          setComments((oldState) => {
+                            let copy = JSON.parse(JSON.stringify(oldState));
+
+                            copy.splice(
+                              copy.findIndex(
+                                (el) =>
+                                  el._id.toString() === comment._id.toString()
+                              ),
+                              1
+                            );
+
+                            return copy;
+                          });
+                        }}
+                      />
+                    );
                   })}
                 </div>
               </CommentSectionContainer>
