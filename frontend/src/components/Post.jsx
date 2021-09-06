@@ -324,8 +324,9 @@ function Post({ data, onDelete }) {
                       let copy = JSON.parse(JSON.stringify(oldComments));
                       copy.push({
                         text: newCommentText,
-                        userId: auth._id.toString(),
+                        userId: auth,
                         postId: data._id.toString(),
+                        createdAt: Date.now(),
                       });
 
                       return copy;
