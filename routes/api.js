@@ -4,6 +4,7 @@ const router = express.Router();
 const controller = require('../controllers/apiController');
 
 router.get('/user', controller.user.GET);
+router.put('/user', controller.account.PUT);
 router.get('/user/:id', controller.specificUser.GET);
 
 router

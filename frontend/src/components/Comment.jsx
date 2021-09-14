@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import OptionsIcon from '../assets/icons/options.svg';
 import DeleteIcon from '../assets/icons/delete.svg';

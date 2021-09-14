@@ -8,6 +8,8 @@ import Post from '../components/Post';
 import PostForm from '../components/PostForm';
 
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { fetchAccount } from '../features/auth/authSlice';
 
 import { useParams } from 'react-router-dom';
 
@@ -18,6 +20,16 @@ let Separator = styled.span`
     content: '|';
     padding: 0 10px;
   }
+`;
+
+let ProfilePicture = styled.img`
+  height: 150px;
+  width: 150px;
+
+  object-fit: cover;
+  border-radius: 5px;
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 `;
 
 function ProfilePage({ userId }) {
@@ -34,6 +46,10 @@ function ProfilePage({ userId }) {
 
   let [posts, setPosts] = useState([]);
 
+  let [profilePicInput, setProfilePicInput] = useState('');
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (userToFetch == null) return;
     if (userStatus !== 'idle') return;
@@ -43,12 +59,12 @@ function ProfilePage({ userId }) {
     let fetchUserAndSetState = async () => {
       axios
         .get(`/api/user/${userToFetch}`)
-        .then((response) => {
+        .then(response => {
           if (response.data._id.toString() == null) return;
           setUser(response.data);
           setUserStatus('fulfilled');
         })
-        .catch((err) => {
+        .catch(err => {
           setUserStatus('rejected');
         });
     };
@@ -63,11 +79,11 @@ function ProfilePage({ userId }) {
 
     axios
       .get(`/api/user/${userToFetch}/friends`)
-      .then((response) => {
+      .then(response => {
         setNumberOfFriends(response.data.friends.length);
         setNumberStatus('fulfilled');
       })
-      .catch((err) => {
+      .catch(err => {
         setNumberStatus('rejected');
       });
   }, [user, userToFetch, numberStatus]);
@@ -75,13 +91,31 @@ function ProfilePage({ userId }) {
   useEffect(() => {
     if (user == null) return;
 
-    axios.get(`/api/user/${userToFetch}/post`).then((response) => {
+    axios.get(`/api/user/${userToFetch}/post`).then(response => {
       setPosts(response.data);
     });
   }, [user, userToFetch]);
 
   async function handlePost(postId, text) {
     return await axios.post('/api/post', { text });
+  }
+
+  function callbackProfilePicChange(e) {
+    setProfilePicInput(e.target.value);
+  }
+
+  function callbackProfilePicSave() {
+    if (user == null) return;
+
+    axios
+      .put(`/api/user/`, { profilePicture: profilePicInput })
+      .then(() => {
+        setProfilePicInput('');
+        dispatch(fetchAccount());
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   return (
@@ -92,7 +126,8 @@ function ProfilePage({ userId }) {
       <div>
         {user && (
           <>
-            {user.name} {user._id}
+            <ProfilePicture src={user.profilePicture} alt="" />
+            {user.name}
           </>
         )}
       </div>
@@ -114,6 +149,17 @@ function ProfilePage({ userId }) {
           <br />
           <br />
           {user?._id.toString() === userId && (
+            <>
+              Change profile picture
+              <div>
+                <input onChange={callbackProfilePicChange} type="text" />
+                <button onClick={callbackProfilePicSave}>OK</button>
+              </div>
+            </>
+          )}
+          <br />
+          <br />
+          {user?._id.toString() === userId && (
             <PostForm
               handlePost={handlePost}
               onConfirm={() => {
@@ -123,14 +169,14 @@ function ProfilePage({ userId }) {
           )}
           <br />
           <br />
-          {posts.map((post) => (
+          {posts.map(post => (
             <Post
-              onDelete={(id) => {
-                setPosts((posts) => {
+              onDelete={id => {
+                setPosts(posts => {
                   let copy = posts.slice();
 
                   copy.splice(
-                    posts.findIndex((el) => el._id.toString() === id),
+                    posts.findIndex(el => el._id.toString() === id),
                     1
                   );
 

@@ -23,9 +23,11 @@ controller.account = {
     (req, res, next) => {
       let newProfilePicture = req.body.profilePicture;
 
+      console.log(newProfilePicture);
+
       if (newProfilePicture == null)
         return next(createError(400, 'Bad request.'));
-      User.findById(req.user._id.toString()).then((user) => {
+      User.findById(req.user._id.toString()).then(user => {
         user.profilePicture = newProfilePicture;
         user.save().then(() => {
           res.json({ status: 'success' });
@@ -55,10 +57,10 @@ controller.likePost = {
         { userId, postId },
         { upsert: true }
       )
-        .then((newDoc) => {
+        .then(newDoc => {
           res.json(newDoc);
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -67,10 +69,10 @@ controller.likePost = {
     isAuthenticated,
     (req, res, next) => {
       Like.find({ postId: req.params.id })
-        .then((likes) => {
+        .then(likes => {
           res.json(likes);
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -85,7 +87,7 @@ controller.likePost = {
         .then(() => {
           res.json({ msg: 'success' });
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -102,10 +104,10 @@ controller.commentPost = {
       let text = req.body.text;
 
       Comment.create({ userId, postId, text })
-        .then((newDoc) => {
+        .then(newDoc => {
           res.json(newDoc);
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -119,7 +121,7 @@ controller.commentPost = {
       let newText = req.body.text;
 
       Comment.findById(commentId)
-        .then((found) => {
+        .then(found => {
           if (found.userId.toString() !== currentUserId)
             return next(
               createError(400, "Can't edit other people's comments!")
@@ -129,7 +131,7 @@ controller.commentPost = {
             .update({ text: newText })
             .then(() => res.json({ msg: 'Successful edit', status: true }));
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -139,10 +141,10 @@ controller.commentPost = {
     (req, res, next) => {
       Comment.find({ postId: req.params.id })
         .populate('userId')
-        .then((comments) => {
+        .then(comments => {
           res.json(comments);
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -155,7 +157,7 @@ controller.commentPost = {
       let currentUser = req.user._id.toString();
 
       Comment.findById(commentId)
-        .then((found) => {
+        .then(found => {
           if (found.userId.toString() !== currentUser)
             return next(
               createError(400, "Can't delete other people's comments!")
@@ -167,7 +169,7 @@ controller.commentPost = {
               res.json({ msg: 'Successfully removed comment', status: true })
             );
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -182,10 +184,10 @@ controller.post = {
       let textForNewPost = req.body.text;
 
       Post.create({ author: authorId, text: textForNewPost })
-        .then((newDoc) => {
+        .then(newDoc => {
           res.json(newDoc);
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -195,10 +197,10 @@ controller.post = {
     (req, res, next) => {
       let requestedPostId = req.params.id;
       Post.findById(requestedPostId)
-        .then((doc) => {
+        .then(doc => {
           res.json(doc);
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -210,8 +212,8 @@ controller.post = {
 
       Post.find({ author: userId })
         .sort('-createdAt')
-        .then((posts) => res.json(posts))
-        .catch((err) => next(err));
+        .then(posts => res.json(posts))
+        .catch(err => next(err));
     },
   ],
   DELETE: [
@@ -221,7 +223,7 @@ controller.post = {
       let requestedPostId = req.params.id;
 
       Post.findById(requestedPostId)
-        .then((found) => {
+        .then(found => {
           if (found.author.toString() !== currentUserId)
             return next(createError(400, "Can't delete other people's posts!"));
 
@@ -231,7 +233,7 @@ controller.post = {
               res.json({ msg: 'Successfully removed post', status: true })
             );
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -243,7 +245,7 @@ controller.post = {
       let newText = req.body.text;
 
       Post.findById(requestedPostId)
-        .then((found) => {
+        .then(found => {
           if (found.author.toString() !== req.user._id.toString())
             return next(createError(400, "Can't edit other people's posts!"));
 
@@ -251,7 +253,7 @@ controller.post = {
             .update({ text: newText })
             .then(() => res.json({ msg: 'Successful edit', status: true }));
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -282,15 +284,15 @@ controller.friends = {
       let { id } = req.params;
 
       FriendRequest.find({ $or: [{ from: id }, { to: id }] })
-        .then((requests) => {
+        .then(requests => {
           let friends = [],
             youRequested = [],
             theyRequested = [];
 
-          requests.forEach((request) => {
+          requests.forEach(request => {
             let hasMirrors = false;
 
-            requests.forEach((requestToCompare) => {
+            requests.forEach(requestToCompare => {
               let areMirrored =
                 requestToCompare.from.equals(request.to) &&
                 requestToCompare.to.equals(request.from);
@@ -324,7 +326,7 @@ controller.friends = {
             theyRequested,
           });
         })
-        .catch((err) => {
+        .catch(err => {
           next(err);
         });
     },
@@ -344,10 +346,10 @@ controller.friends = {
       }
 
       FriendRequest.create({ from: req.user._id, to: newFriend })
-        .then((newDoc) => {
+        .then(newDoc => {
           res.json({ status: true, result: newDoc });
         })
-        .catch((err) => {
+        .catch(err => {
           return next(err);
         });
     },
@@ -372,7 +374,7 @@ controller.friends = {
         .then(() => {
           res.json({ status: true });
         })
-        .catch((err) => {
+        .catch(err => {
           return next(err);
         });
     },
