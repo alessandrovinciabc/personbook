@@ -89,6 +89,10 @@ let CardTop = styled.div`
   align-items: space-between;
 `;
 
+let CommentContainer = styled.div`
+  word-wrap: break-word;
+`;
+
 function Comment({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
 
@@ -145,7 +149,7 @@ function Comment({ data, onDelete }) {
       >
         Are you sure you want to delete this post?
       </Modal>
-      <div>
+      <CommentContainer>
         <CardTop>
           <UserBlock user={data.userId} />
           {auth?._id.toString() === data.userId._id.toString() && (
@@ -156,7 +160,7 @@ function Comment({ data, onDelete }) {
           {timeOfPost} at {hourOfPost}
         </PostTime>
         {data.text}
-      </div>
+      </CommentContainer>
     </>
   );
 }
