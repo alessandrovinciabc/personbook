@@ -63,3 +63,12 @@ body {
     font-family: 'Lato', sans-serif;
 	background-color: rgb(240, 242, 245);
 }
+
+a {
+	color: black;
+	text-decoration: none;
+}
+
+a:visited {
+	color: black;
+}
