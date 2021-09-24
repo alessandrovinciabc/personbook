@@ -12,6 +12,7 @@
     "dev": "DEBUG=personbook:* concurrently 'cd frontend && npm run start-dev' 'npm run start-dev'"
   },
   "dependencies": {
+    "axios": "^0.21.4",
     "concurrently": "^6.2.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",

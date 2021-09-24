@@ -5,6 +5,8 @@ const paginateMongoose = require('../util/paginateMongoose');
 
 const createError = require('http-errors');
 
+const axios = require('axios');
+
 function isAuthenticated(req, res, next) {
   if (req.user == null) return res.redirect('/');
   next();
@@ -177,6 +179,32 @@ controller.commentPost = {
 };
 
 controller.post = {
+  GETFeed: [
+    isAuthenticated,
+    async (req, res, next) => {
+      let currentUserId = req.user._id.toString();
+
+      let response = await axios.get(
+        `http://localhost:${
+          process.env.PORT || '3000'
+        }/api/user/${currentUserId}/friends`
+      );
+      let friends = response.data.friends;
+
+      Post.find({
+        author: {
+          $in: friends,
+        },
+      })
+        .sort('-createdAt')
+        .then(feed => {
+          res.json({ feed });
+        })
+        .catch(err => {
+          return next(err);
+        });
+    },
+  ],
   POST: [
     isAuthenticated,
     (req, res, next) => {
@@ -279,7 +307,6 @@ const FriendRequest = require('../models/FriendRequest');
 
 controller.friends = {
   GET: [
-    isAuthenticated,
     (req, res, next) => {
       let { id } = req.params;
 

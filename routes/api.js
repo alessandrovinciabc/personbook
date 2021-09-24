@@ -14,6 +14,8 @@ router
 router.delete('/user/:id/friends/:friendid', controller.friends.DELETE);
 
 /* Posts */
+router.get('/feed', controller.post.GETFeed);
+
 router.post('/post', controller.post.POST);
 router.get('/post/:id', controller.post.GETOne);
 router.get('/user/:id/post', controller.post.GETAll);
