@@ -38,6 +38,7 @@ function HomePage() {
           <br />
           {authStatus !== 'fulfilled' && <Loader />}
         </div>
+        {feed.length === 0 && <h6>Nothing to see here!</h6>}
         {feed.map(post => (
           <Post key={post._id} data={post} />
         ))}
