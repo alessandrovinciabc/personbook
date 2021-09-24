@@ -6,8 +6,10 @@ const createError = require('http-errors');
 require('./util/setupMongoose')();
 
 /* Middleware */
+const helmet = require('helmet');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
+app.use(helmet());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -54,8 +56,8 @@ app.use(
 
       res.redirect('http://localhost:3001' + url);
     } else {
-      // Send index.html from frontend
-      // ...
+      const path = require('path');
+      res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
     }
   },
   indexRouter

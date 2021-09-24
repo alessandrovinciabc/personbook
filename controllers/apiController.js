@@ -7,6 +7,8 @@ const createError = require('http-errors');
 
 const axios = require('axios');
 
+const { body, validationResult } = require('express-validator');
+
 function isAuthenticated(req, res, next) {
   if (req.user == null) return res.redirect('/');
   next();
@@ -22,6 +24,7 @@ controller.account = {
   ],
   PUT: [
     isAuthenticated,
+    body('profilePicture').isURL(),
     (req, res, next) => {
       let newProfilePicture = req.body.profilePicture;
 
@@ -99,6 +102,7 @@ controller.likePost = {
 controller.commentPost = {
   POST: [
     isAuthenticated,
+    body('text').trim().escape().isLength({ min: 1, max: 1024 }),
     (req, res, next) => {
       let userId = req.user._id.toString();
       let postId = req.params.id;
@@ -116,6 +120,7 @@ controller.commentPost = {
   ],
   PUT: [
     isAuthenticated,
+    body('text').trim().escape().isLength({ min: 1, max: 1024 }),
     (req, res, next) => {
       let commentId = req.params.commentid;
       let currentUserId = req.user._id.toString();
@@ -129,9 +134,7 @@ controller.commentPost = {
               createError(400, "Can't edit other people's comments!")
             );
 
-          return found
-            .update({ text: newText })
-            .then(() => res.json({ msg: 'Successful edit', status: true }));
+          return found.update({ text: newText }).then(() => res.json(text));
         })
         .catch(err => {
           next(err);
@@ -207,6 +210,7 @@ controller.post = {
   ],
   POST: [
     isAuthenticated,
+    body('text').trim().escape().isLength({ min: 1, max: 1024 }),
     (req, res, next) => {
       let authorId = req.user._id.toString();
       let textForNewPost = req.body.text;
@@ -268,6 +272,7 @@ controller.post = {
   ],
   UPDATE: [
     isAuthenticated,
+    body('text').isLength({ min: 1, max: 1024 }).trim().escape(),
     (req, res, next) => {
       let requestedPostId = req.params.id;
       let newText = req.body.text;
@@ -277,9 +282,7 @@ controller.post = {
           if (found.author.toString() !== req.user._id.toString())
             return next(createError(400, "Can't edit other people's posts!"));
 
-          return found
-            .update({ text: newText })
-            .then(() => res.json({ msg: 'Successful edit', status: true }));
+          return found.update({ text: newText }).then(() => res.json(newText));
         })
         .catch(err => {
           next(err);
