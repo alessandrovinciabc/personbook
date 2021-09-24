@@ -22,7 +22,7 @@ let UserIconPlaceholder = styled.div`
   justify-content: center;
 
   &::after {
-    content: '${(props) => props.name[0]}';
+    content: '${props => props.name[0]}';
 
     font-size: 1.5rem;
   }
@@ -44,6 +44,14 @@ let CenterContainer = styled.div`
   align-items: center;
 
   margin-right: 5px;
+`;
+
+let Link = styled.a`
+  color: black !important;
+
+  &:hover .username {
+    text-decoration: underline;
+  }
 `;
 
 function UserBlock({ user, friendOps }) {
@@ -111,16 +119,16 @@ function UserBlock({ user, friendOps }) {
   return (
     <div>
       <CenterContainer>
-        <a href={`/profile/${user._id}`}>
+        <Link href={`/profile/${user._id}`}>
           <CenterContainer>
             {user.profilePicture ? (
               <UserIcon src={user.profilePicture} />
             ) : (
               <UserIconPlaceholder name={user.name} />
             )}
-            {user.name}
+            <span className="username">{user.name}</span>
           </CenterContainer>
-        </a>
+        </Link>
         {showFriendRequestButton && <FriendRequestButton />}
       </CenterContainer>
     </div>

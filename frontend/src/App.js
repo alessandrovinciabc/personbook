@@ -46,7 +46,9 @@ function App() {
           <PendingPage />
         </Route>
         <Route path="/profile" exact>
-          <ProfilePage userId={auth?._id.toString()} />
+          {authStatus === 'fulfilled' && (
+            <Redirect to={`/profile/${auth._id.toString()}`} />
+          )}
         </Route>
         <Route path="/profile/:id" exact>
           <ProfilePage />

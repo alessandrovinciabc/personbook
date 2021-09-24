@@ -8,8 +8,8 @@ import Post from '../components/Post';
 import PostForm from '../components/PostForm';
 
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { fetchAccount } from '../features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAccount, selectCurrentUser } from '../features/auth/authSlice';
 
 import { useParams } from 'react-router-dom';
 
@@ -28,15 +28,55 @@ let ProfilePicture = styled.img`
 
   object-fit: cover;
   border-radius: 5px;
+  border: 3px solid white;
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 `;
 
-function ProfilePage({ userId }) {
+let ProfileBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+`;
+
+let ProfileDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-bottom: 2rem;
+`;
+
+let Detail = styled.div`
+  margin: 0.5rem 0;
+`;
+
+let ProfileName = styled.div`
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  font-size: 1.4rem;
+
+  text-align: center;
+
+  margin-top: 1.5rem;
+`;
+
+let Link = styled.a`
+  color: rgb(16, 137, 218) !important;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+function ProfilePage(props) {
   //If no prop is passed, then use the
   //parameter from the router
   let { id } = useParams();
-  let userToFetch = userId || id;
+  let auth = useSelector(selectCurrentUser);
+  let userToFetch = props.userId || id;
+  let userId = props.userId || auth?._id;
 
   let [userStatus, setUserStatus] = useState('idle');
   let [user, setUser] = useState(null);
@@ -121,44 +161,44 @@ function ProfilePage({ userId }) {
   return (
     <>
       <Navbar isLoggedIn={true} title="Profile" />
-      <br />
-      <br />
-      <div>
+      <ProfileBox>
         {user && (
           <>
             <ProfilePicture src={user.profilePicture} alt="" />
-            {user.name}
+            <ProfileName>{user.name}</ProfileName>
           </>
         )}
-      </div>
+      </ProfileBox>
+
       {numberStatus !== 'fulfilled' ? (
         <Loader />
       ) : (
         <div>
-          {user?._id.toString() === userId && (
-            <>
-              <a href="/friends">
-                {numberOfFriends} {numberOfFriends === 1 ? 'friend' : 'friends'}
-              </a>
-              <Separator />
-              <a href="/friends/pending">Pending</a>
-            </>
-          )}
-          <br />
-          Posts: {posts.length}
-          <br />
-          <br />
-          {user?._id.toString() === userId && (
-            <>
-              Change profile picture
-              <div>
-                <input onChange={callbackProfilePicChange} type="text" />
-                <button onClick={callbackProfilePicSave}>OK</button>
-              </div>
-            </>
-          )}
-          <br />
-          <br />
+          <ProfileDetails>
+            <Detail>Posts: {posts.length}</Detail>
+            {user?._id.toString() === userId && (
+              <Detail>
+                <Link href="/friends">
+                  {numberOfFriends}
+                  {numberOfFriends === 1 ? ' friend' : ' friends'}
+                </Link>
+                <Separator />
+                <Link href="/friends/pending">Pending</Link>
+              </Detail>
+            )}
+            <Detail>
+              {user?._id.toString() === userId && (
+                <>
+                  Change profile picture
+                  <div>
+                    <input onChange={callbackProfilePicChange} type="text" />
+                    <button onClick={callbackProfilePicSave}>OK</button>
+                  </div>
+                </>
+              )}
+            </Detail>
+          </ProfileDetails>
+
           {user?._id.toString() === userId && (
             <PostForm
               handlePost={handlePost}
@@ -167,8 +207,6 @@ function ProfilePage({ userId }) {
               }}
             />
           )}
-          <br />
-          <br />
           {posts.map(post => (
             <Post
               onDelete={id => {
