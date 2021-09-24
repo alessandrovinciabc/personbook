@@ -9,6 +9,36 @@ import UsersList from '../components/UsersList.jsx';
 
 import axios from 'axios';
 
+import styled from 'styled-components';
+
+let Container = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+let UsersContainer = styled.div`
+  width: 100%;
+  max-width: 360px;
+`;
+
+let SpacedDiv = styled.div`
+  margin: 1rem 0;
+`;
+
+let CenteredDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+let PageHeader = styled.div`
+  margin: 2rem 0 1rem 0;
+
+  font-weight: bold;
+  font-size: 1.5rem;
+`;
+
 function UserListPage(props) {
   let [pageNumber, setPageNumber] = useState(1);
   let [maxQuota, setMaxQuota] = useState(0);
@@ -21,7 +51,7 @@ function UserListPage(props) {
     setStatus('loading');
     axios
       .get(`/api/user?page=${pageNumber}`)
-      .then((response) => {
+      .then(response => {
         let newUsers = response.data.docs;
         setUsers(newUsers);
 
@@ -30,7 +60,7 @@ function UserListPage(props) {
 
         setStatus('fulfilled');
       })
-      .catch((err) => {
+      .catch(err => {
         setStatus('rejected');
       });
   }, [pageNumber]);
@@ -38,22 +68,31 @@ function UserListPage(props) {
   return (
     <>
       <Navbar isLoggedIn={true} title="Homepage" />
-      <div>
-        {status !== 'fulfilled' ? <Loader /> : <UsersList users={users} />}
-        <br />
-        <br />
-        {
-          <PaginationBar
-            currentPage={pageNumber}
-            pagesForOneBlock={5}
-            maxQuota={maxQuota}
-            usersPerPage={usersPerPage}
-            onPageChange={(value) => {
-              setPageNumber(value);
-            }}
-          />
-        }
-      </div>
+      <Container>
+        {status !== 'fulfilled' ? (
+          <Loader />
+        ) : (
+          <UsersContainer>
+            <SpacedDiv>
+              <CenteredDiv>
+                <PageHeader>Users</PageHeader>
+              </CenteredDiv>
+              <UsersList users={users} />
+              <CenteredDiv>
+                <PaginationBar
+                  currentPage={pageNumber}
+                  pagesForOneBlock={5}
+                  maxQuota={maxQuota}
+                  usersPerPage={usersPerPage}
+                  onPageChange={value => {
+                    setPageNumber(value);
+                  }}
+                />
+              </CenteredDiv>
+            </SpacedDiv>
+          </UsersContainer>
+        )}
+      </Container>
     </>
   );
 }

@@ -86,12 +86,23 @@ let Icon = styled.img`
 
 let CardTop = styled.div`
   display: flex;
-  align-items: space-between;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
 `;
 
 let CommentContainer = styled.div`
   word-wrap: break-word;
+
+  margin: 1rem 0;
+  padding: 0.5rem;
+
+  background-color: rgb(240, 242, 245);
+
+  border-radius: 5px;
 `;
+
+let PostText = styled.div``;
 
 function Comment({ data, onDelete }) {
   let auth = useSelector(selectCurrentUser);
@@ -107,7 +118,7 @@ function Comment({ data, onDelete }) {
       <RelativeContainer>
         <OptionsButton
           onClick={() => {
-            setDisplayDropdown((oldState) => !oldState);
+            setDisplayDropdown(oldState => !oldState);
           }}
         >
           <Icon src={OptionsIcon} alt="Options Button" />
@@ -159,7 +170,7 @@ function Comment({ data, onDelete }) {
         <PostTime>
           {timeOfPost} at {hourOfPost}
         </PostTime>
-        {data.text}
+        <PostText>{data.text}</PostText>
       </CommentContainer>
     </>
   );

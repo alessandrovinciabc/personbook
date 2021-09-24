@@ -10,6 +10,7 @@ import PostForm from '../components/PostForm';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAccount, selectCurrentUser } from '../features/auth/authSlice';
+import { selectRelationships } from '../features/friendsSlice.js';
 
 import { useParams } from 'react-router-dom';
 
@@ -75,8 +76,9 @@ function ProfilePage(props) {
   //parameter from the router
   let { id } = useParams();
   let auth = useSelector(selectCurrentUser);
-  let userToFetch = props.userId || id;
+  const relationships = useSelector(selectRelationships);
   let userId = props.userId || auth?._id;
+  let userToFetch = props.userId || id;
 
   let [userStatus, setUserStatus] = useState('idle');
   let [user, setUser] = useState(null);
@@ -151,12 +153,63 @@ function ProfilePage(props) {
       .put(`/api/user/`, { profilePicture: profilePicInput })
       .then(() => {
         setProfilePicInput('');
-        dispatch(fetchAccount());
+        window.location.reload();
       })
       .catch(err => {
         console.log(err);
       });
   }
+
+  function onFriendAdd() {
+    return axios.post(`/api/user/${auth._id}/friends`, {
+      newFriend: userToFetch,
+    });
+  }
+
+  function onFriendDelete() {
+    return axios.delete(`/api/user/${auth._id}/friends/${userToFetch}`);
+  }
+
+  const userStringId = userToFetch.toString();
+  let areFriends, heRequested, youRequested;
+  areFriends = relationships.friends.includes(userStringId);
+  heRequested = relationships.theyRequested.includes(userStringId);
+  youRequested = relationships.youRequested.includes(userStringId);
+
+  let FriendRequestButton = () => {
+    let buttonText;
+
+    if (areFriends) {
+      buttonText = 'Remove Friend';
+    } else if (heRequested) {
+      buttonText = 'Accept';
+    } else if (youRequested) {
+      buttonText = 'Cancel';
+    } else {
+      //nobody requested to be friends
+      buttonText = 'Add';
+    }
+
+    return (
+      <button
+        onClick={() => {
+          let promise;
+          if (areFriends || youRequested) {
+            promise = onFriendDelete(user._id);
+          } else {
+            promise = onFriendAdd(user._id);
+          }
+
+          //Update when user adds/removes a friend
+          promise.then(() => {
+            dispatch(fetchAccount());
+          });
+        }}
+      >
+        {buttonText}
+      </button>
+    );
+  };
 
   return (
     <>
@@ -187,11 +240,18 @@ function ProfilePage(props) {
               </Detail>
             )}
             <Detail>
+              {auth?._id !== userToFetch ? <FriendRequestButton /> : null}
+            </Detail>
+            <Detail>
               {user?._id.toString() === userId && (
                 <>
                   Change profile picture
                   <div>
-                    <input onChange={callbackProfilePicChange} type="text" />
+                    <input
+                      value={profilePicInput}
+                      onChange={callbackProfilePicChange}
+                      type="text"
+                    />
                     <button onClick={callbackProfilePicSave}>OK</button>
                   </div>
                 </>
