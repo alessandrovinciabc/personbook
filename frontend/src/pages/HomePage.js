@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import Navbar from '../components/Navbar.jsx';
 
@@ -8,11 +9,23 @@ import { selectCurrentUser, selectStatus } from '../features/auth/authSlice';
 
 // Components
 import Loader from '../components/Loader';
+import Post from '../components/Post';
 
-function HomePage(props) {
+function HomePage() {
   let auth = useSelector(selectCurrentUser);
   let provider = auth ? auth.authId.provider : 'None';
   let authStatus = useSelector(selectStatus);
+
+  let [feed, setFeed] = useState([]);
+
+  useEffect(() => {
+    if (auth == null) return;
+
+    axios.get(`/api/feed`).then(response => {
+      setFeed(response.data.feed);
+    });
+  }, [auth]);
+
   return (
     <>
       <Navbar isLoggedIn={true} title="Homepage" />
@@ -25,6 +38,9 @@ function HomePage(props) {
           <br />
           {authStatus !== 'fulfilled' && <Loader />}
         </div>
+        {feed.map(post => (
+          <Post key={post._id} data={post} />
+        ))}
       </div>
     </>
   );
